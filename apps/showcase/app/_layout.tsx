@@ -13,8 +13,16 @@ import { useColorScheme } from 'nativewind';
 import * as React from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { AuthProvider } from '../contexts/AuthContext';
+import { NotificationProvider } from '../contexts/NotificationContext';
+import { DevicesProvider } from '../hooks/useDevicesContext';
+import { setupBackgroundMessageHandler } from '../hooks/useFirebaseMessaging';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 SplashScreen.preventAutoHideAsync();
+
+// Setup background messaging
+setupBackgroundMessageHandler();
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -41,37 +49,42 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={NAV_THEME[colorScheme]}>
-      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <GestureHandlerRootView
-        style={{ flex: 1, backgroundColor: NAV_THEME[colorScheme].colors.background }}>
-        <KeyboardProvider>
-          <Stack
-            screenOptions={{
-              headerBackTitle: 'Back',
-              headerTitle(props) {
-                return (
-                  <Text className="ios:font-medium android:mt-1.5 text-xl">
-                    {toOptions(props.children.split('/').pop())}
-                  </Text>
-                );
-              },
-              headerRight: () => <HeaderRightView />,
-            }}>
-            <Stack.Screen
-              name="index"
-              options={{
-                headerLargeTitle: true,
-                headerTitle: 'Showcase',
-                headerLargeTitleShadowVisible: false,
-                headerTransparent: true,
-              }}
-            />
-          </Stack>
-          <PortalHost />
-        </KeyboardProvider>
-      </GestureHandlerRootView>
-    </ThemeProvider>
+    <SafeAreaProvider>
+      <AuthProvider>
+        <NotificationProvider>
+          <DevicesProvider>
+            <ThemeProvider value={NAV_THEME[colorScheme]}>
+              <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
+              <GestureHandlerRootView
+                style={{ flex: 1, backgroundColor: NAV_THEME[colorScheme].colors.background }}>
+                <KeyboardProvider>
+                  <Stack
+                    screenOptions={{
+                      headerBackTitle: 'Back',
+                      headerTitle(props) {
+                        return (
+                          <Text className="ios:font-medium android:mt-1.5 text-xl">
+                            {toOptions(props.children.split('/').pop())}
+                          </Text>
+                        );
+                      },
+                      headerRight: () => <HeaderRightView />,
+                    }}>
+                    <Stack.Screen
+                      name="index"
+                      options={{
+                        headerShown: false, // Home screens handle their own headers
+                      }}
+                    />
+                  </Stack>
+                  <PortalHost />
+                </KeyboardProvider>
+              </GestureHandlerRootView>
+            </ThemeProvider>
+          </DevicesProvider>
+        </NotificationProvider>
+      </AuthProvider>
+    </SafeAreaProvider>
   );
 }
 

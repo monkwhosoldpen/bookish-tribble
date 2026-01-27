@@ -3,12 +3,9 @@ import { View, Pressable } from 'react-native';
 import { Text } from '@/registry/components/ui/text';
 import { Icon } from '@/registry/components/ui/icon';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { useLocalSearchParams } from 'expo-router';
 import { useChannelContext } from '@/features/channels/ChannelContext';
 import { MainChannelView } from '@/features/channels/MainChannelView';
 import * as Haptics from 'expo-haptics';
-import { ChannelProvider } from '@/features/channels/ChannelContext';
-import { Entity } from '@/features/channels/types';
 
 function ChannelIndexContent() {
     const { sidebarChannels, selectedIndex, handleBackToMain } = useChannelContext();
@@ -53,24 +50,5 @@ function ChannelIndexContent() {
 }
 
 export default function ChannelIndex() {
-    const { username } = useLocalSearchParams();
-
-    // Mock data for the entity
-    const channelData = React.useMemo<Entity>(() => ({
-        username: typeof username === 'string' ? username : 'unknown',
-        displayname: typeof username === 'string' ? username.charAt(0).toUpperCase() + username.slice(1) : 'Username',
-        description: 'Digital creator and tech enthusiast. Building the future of social media through decentralized transmission nodes.',
-        avatarurl: 'https://via.placeholder.com/160',
-        bannerurl: 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=1000',
-        client_type: 'managed',
-    }), [username]);
-
-    return (
-        <ChannelProvider
-            username={typeof username === 'string' ? username : 'unknown'}
-            channelData={channelData}
-        >
-            <ChannelIndexContent />
-        </ChannelProvider>
-    );
+    return <ChannelIndexContent />;
 }

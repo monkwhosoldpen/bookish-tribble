@@ -6,6 +6,9 @@
       "@showcase/*": [
         "./*"
       ],
+      "@/*": [
+        "./*"
+      ],
       "@/registry/*": [
         "../../packages/registry/src/*"
       ]
