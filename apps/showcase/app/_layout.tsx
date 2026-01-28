@@ -16,6 +16,7 @@ import { KeyboardProvider } from 'react-native-keyboard-controller';
 import { AuthProvider } from '../contexts/AuthContext';
 import { HapticsProvider } from '../contexts/HapticsContext';
 import { NotificationProvider } from '../contexts/NotificationContext';
+import { ToastProvider } from '../components/ui/toast';
 import { DevicesProvider } from '../hooks/useDevicesContext';
 import { setupBackgroundMessageHandler } from '../hooks/useFirebaseMessaging';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -54,8 +55,9 @@ export default function RootLayout() {
       <AuthProvider>
         <HapticsProvider>
           <NotificationProvider>
-            <DevicesProvider>
-              <ThemeProvider value={NAV_THEME[colorScheme]}>
+            <ToastProvider>
+              <DevicesProvider>
+                <ThemeProvider value={NAV_THEME[colorScheme]}>
                 <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
                 <GestureHandlerRootView
                   style={{ flex: 1, backgroundColor: NAV_THEME[colorScheme].colors.background }}>
@@ -82,8 +84,9 @@ export default function RootLayout() {
                     <PortalHost />
                   </KeyboardProvider>
                 </GestureHandlerRootView>
-              </ThemeProvider>
-            </DevicesProvider>
+                </ThemeProvider>
+              </DevicesProvider>
+            </ToastProvider>
           </NotificationProvider>
         </HapticsProvider>
       </AuthProvider>
