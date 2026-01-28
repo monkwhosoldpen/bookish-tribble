@@ -1,5 +1,3 @@
-import { } from 'react-native';
-
 export interface NotificationMessage {
     notification?: {
         title?: string;
@@ -18,6 +16,12 @@ export interface NotificationEngine {
 }
 
 // Platform-specific implementations will be in .web.ts and .native.ts files
-export const useNotificationEngine = (): NotificationEngine => {
-    throw new Error('useNotificationEngine must be implemented for this platform');
-};
+// This fallback returns a no-op engine for unsupported platforms
+export const useNotificationEngine = (): NotificationEngine => ({
+    requestPermission: async () => false,
+    getToken: async () => null,
+    disable: async () => {},
+    registerServiceWorker: async () => {},
+    setupBackgroundMessageHandler: () => {},
+    setupForegroundListener: () => undefined,
+});

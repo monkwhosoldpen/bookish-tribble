@@ -19,20 +19,11 @@ interface AuthState {
 
 const AuthContext = createContext<AuthState | undefined>(undefined);
 
-// Memoized selectors for performance
-export const useAuthSelector = <T,>(selector: (state: AuthState) => T): T => {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error('useAuthSelector must be used within an AuthProvider');
-    }
-    return useMemo(() => selector(context), [context, selector]);
-};
-
-// Optimized hooks for common use cases
-export const useAuthUser = () => useAuthSelector(state => state.user);
-export const useAuthLoading = () => useAuthSelector(state => state.loading);
-export const useAuthIsAuthenticated = () => useAuthSelector(state => state.isAuthenticated);
-export const useAuthError = () => useAuthSelector(state => state.error);
+// Convenience hooks for common use cases
+export const useAuthUser = () => useAuth().user;
+export const useAuthLoading = () => useAuth().loading;
+export const useAuthIsAuthenticated = () => useAuth().isAuthenticated;
+export const useAuthError = () => useAuth().error;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [authState, setAuthState] = useState<{

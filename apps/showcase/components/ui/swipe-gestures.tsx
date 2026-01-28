@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { PanGestureHandler } from 'react-native-gesture-handler';
 import { Animated, View } from 'react-native';
-import { runOnJS } from 'react-native-reanimated';
 
 export interface SwipeGestureProps {
     children: React.ReactNode;
@@ -56,16 +55,16 @@ export function SwipeGesture({
             if (Math.abs(translationX) > Math.abs(translationY)) {
                 // Horizontal swipe
                 if (translationX > threshold && onSwipeRight) {
-                    runOnJS(onSwipeRight)();
+                    onSwipeRight();
                 } else if (translationX < -threshold && onSwipeLeft) {
-                    runOnJS(onSwipeLeft)();
+                    onSwipeLeft();
                 }
             } else {
                 // Vertical swipe
                 if (translationY > threshold && onSwipeDown) {
-                    runOnJS(onSwipeDown)();
+                    onSwipeDown();
                 } else if (translationY < -threshold && onSwipeUp) {
-                    runOnJS(onSwipeUp)();
+                    onSwipeUp();
                 }
             }
         }
@@ -157,13 +156,13 @@ export function SwipeableChatItem({
                     toValue: -80,
                     useNativeDriver: false,
                 }).start();
-                runOnJS(onSwipeLeft)();
+                (onSwipeLeft)();
             } else if (shouldSwipeRight && onSwipeRight) {
                 Animated.spring(translateX, {
                     toValue: 80,
                     useNativeDriver: false,
                 }).start();
-                runOnJS(onSwipeRight)();
+                (onSwipeRight)();
             } else {
                 // Snap back
                 Animated.spring(translateX, {

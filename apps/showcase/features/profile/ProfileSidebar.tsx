@@ -19,7 +19,7 @@ export function ProfileSidebar() {
     const { impact } = useFeedback();
 
     const handleToggle = () => {
-        impact('medium' as any);
+        impact();
         toggleSidebar();
     };
 

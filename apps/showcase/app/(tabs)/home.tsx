@@ -1,12 +1,8 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { View, ActivityIndicator } from 'react-native';
 import { AuthHome } from '@/components/AuthHome';
 import { UnauthHome } from '@/components/UnauthHome';
 import { useAuthIsAuthenticated, useAuthLoading } from '@/contexts/AuthContext';
-import { ActivityIndicator } from 'react-native';
-import { ScreenWrapper } from '@/components/layout/ScreenWrapper';
-import { ShowcaseHeader } from '@/components/layout/ShowcaseHeader';
-import { BottomNav } from '@/components/layout/BottomNav';
 
 export default function HomePage() {
   const isAuthenticated = useAuthIsAuthenticated();
@@ -24,18 +20,5 @@ export default function HomePage() {
     );
   }
 
-  return (
-    <>
-      {isAuthenticated ? 
-        <AuthHome /> : 
-        <ScreenWrapper
-          header={<ShowcaseHeader />}
-          bottomNav={<BottomNav activeTab="home" />}
-          mobileContent={<UnauthHome onLogin={handleLogin} />}
-          desktopContent={<UnauthHome onLogin={handleLogin} />}
-          fullWidth={false}
-        />
-      }
-    </>
-  );
+  return isAuthenticated ? <AuthHome /> : <UnauthHome onLogin={handleLogin} />;
 }

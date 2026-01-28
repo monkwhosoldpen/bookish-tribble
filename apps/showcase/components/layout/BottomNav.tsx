@@ -28,6 +28,9 @@ export const BottomNav = React.memo(function BottomNav({ activeTab }: BottomNavP
             case 'home':
                 router.replace('/(tabs)/home');
                 break;
+            case 'explore':
+                router.replace('/(tabs)/explore');
+                break;
             case 'settings':
                 router.replace('/(tabs)/settings');
                 break;
@@ -48,6 +51,13 @@ export const BottomNav = React.memo(function BottomNav({ activeTab }: BottomNavP
                     iconName="home"
                     active={activeTab === 'home'}
                     onPress={() => handlePress('home')}
+                />
+                <NavIcon
+                    icon={MaterialIcons}
+                    label="Explore"
+                    iconName="explore"
+                    active={activeTab === 'explore'}
+                    onPress={() => handlePress('explore')}
                 />
                 <NavIcon
                     icon={MaterialIcons}

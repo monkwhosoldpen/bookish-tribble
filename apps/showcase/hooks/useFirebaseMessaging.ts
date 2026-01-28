@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useMemo } from 'react';
+import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { Platform } from 'react-native';
 
 // Only import Firebase on native platforms
@@ -21,7 +21,7 @@ export function useFirebaseMessaging() {
     const [token, setToken] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const foregroundHandlerRef = { current: null as ForegroundMessageHandler | null };
+    const foregroundHandlerRef = useRef<ForegroundMessageHandler | null>(null);
 
     const requestPermission = useCallback(async (): Promise<boolean> => {
         try {

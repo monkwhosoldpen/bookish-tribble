@@ -102,26 +102,3 @@ export function useHaptics() {
   return context;
 }
 
-// Export convenience functions for backward compatibility
-export const haptics = {
-  selection: () => {
-    const context = useContext(HapticsContext);
-    return context?.selection();
-  },
-  impact: (style?: Haptics.ImpactFeedbackStyle) => {
-    const context = useContext(HapticsContext);
-    return context?.impact(style);
-  },
-  success: () => {
-    const context = useContext(HapticsContext);
-    return context?.success();
-  },
-  error: () => {
-    const context = useContext(HapticsContext);
-    return context?.error();
-  },
-  warning: () => {
-    const context = useContext(HapticsContext);
-    return context?.warning();
-  },
-};
