@@ -69,41 +69,51 @@ export const AuthHomeMobile = function AuthHomeMobile() {
             onSwipeRight={() => handleDeleteChat(item.username)}
             leftAction={
                 <View className="items-center justify-center">
-                    <Icon as={MaterialIcons} name="archive" size={20} className="text-blue-500" />
+                    <Icon as={MaterialIcons} name="archive" size={20} className="text-white" />
                 </View>
             }
             rightAction={
                 <View className="items-center justify-center">
-                    <Icon as={MaterialIcons} name="delete" size={20} className="text-red-500" />
+                    <Icon as={MaterialIcons} name="delete" size={20} className="text-white" />
                 </View>
             }
         >
             <Pressable
                 onPress={() => handleChatPress(item.username)}
-                className="flex-row items-center gap-4 py-4 px-4 border-b border-border/40 active:opacity-80"
+                className="flex-row items-center py-2.5 px-4 active:bg-foreground/5"
             >
-                <View className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center">
-                    <Text className="text-primary font-bold text-lg">
+                {/* Avatar */}
+                <View className="h-[49px] w-[49px] rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#25D366' }}>
+                    <Text className="text-white font-bold text-[20px]">
                         {item.username.charAt(0).toUpperCase()}
                     </Text>
                 </View>
-                <View className="flex-1 gap-1">
-                    <Text className="text-[15px] font-black tracking-tight text-foreground">{item.username}</Text>
-                    <Text className="text-[13px] text-muted-foreground" numberOfLines={1}>
-                        {item.lastMessage}
-                    </Text>
-                </View>
-                <View className="items-end gap-1">
-                    <Text className="text-xs text-muted-foreground">
-                        {item.timestamp}
-                    </Text>
-                    {item.unreadCount && (
-                        <View className="w-5 h-5 bg-primary rounded-full items-center justify-center">
-                            <Text className="text-primary-foreground text-xs font-bold">
-                                {item.unreadCount}
+                {/* Content */}
+                <View className="flex-1 border-b border-border/15 pb-2.5">
+                    <View className="flex-row items-center justify-between">
+                        <Text className="text-[16.5px] font-normal text-foreground">{item.username}</Text>
+                        <Text
+                            className="text-[12px]"
+                            style={{ color: item.unreadCount ? '#25D366' : '#8696A0' }}
+                        >
+                            {item.timestamp}
+                        </Text>
+                    </View>
+                    <View className="flex-row items-center justify-between mt-1">
+                        <View className="flex-row items-center flex-1 mr-4">
+                            <Icon as={MaterialIcons} name="done-all" size={16} color="#53BDEB" style={{ marginRight: 3 }} />
+                            <Text className="text-[14px] text-muted-foreground flex-1" numberOfLines={1}>
+                                {item.lastMessage}
                             </Text>
                         </View>
-                    )}
+                        {item.unreadCount ? (
+                            <View className="min-w-[20px] h-[20px] rounded-full items-center justify-center px-1.5" style={{ backgroundColor: '#25D366' }}>
+                                <Text className="text-white text-[11px] font-bold">
+                                    {item.unreadCount}
+                                </Text>
+                            </View>
+                        ) : null}
+                    </View>
                 </View>
             </Pressable>
         </SwipeableChatItem>
@@ -111,29 +121,26 @@ export const AuthHomeMobile = function AuthHomeMobile() {
 
     return (
         <View className="flex-1 bg-background">
-            <View className="border-b border-border/60 bg-background/90 backdrop-blur-xl">
-                <View className="flex-row gap-1 px-4 py-3">
+            {/* WhatsApp-style top tabs on teal bar */}
+            <View style={{ backgroundColor: '#075E54' }}>
+                <View className="flex-row">
                     {(['following', 'invites', 'favourites'] as ChatTab[]).map((tab) => (
                         <Pressable
                             key={tab}
                             onPress={() => handleTabChange(tab)}
-                            className={cn(
-                                'px-4 py-2 rounded-full',
-                                activeTab === tab
-                                    ? 'bg-primary/10'
-                                    : 'bg-transparent'
-                            )}
+                            className="flex-1 items-center py-3 relative"
                         >
                             <Text
                                 className={cn(
-                                    'text-sm font-semibold capitalize',
-                                    activeTab === tab
-                                        ? 'text-primary'
-                                        : 'text-muted-foreground'
+                                    'text-[13px] font-bold uppercase tracking-wide',
+                                    activeTab === tab ? 'text-white' : 'text-white/60'
                                 )}
                             >
-                                {tab} ({counts[tab]})
+                                {tab}
                             </Text>
+                            {activeTab === tab && (
+                                <View className="absolute bottom-0 left-4 right-4 h-[3px] rounded-full" style={{ backgroundColor: '#25D366' }} />
+                            )}
                         </Pressable>
                     ))}
                 </View>
@@ -147,16 +154,26 @@ export const AuthHomeMobile = function AuthHomeMobile() {
                     renderItem={renderChatItem}
                     keyExtractor={(item) => item.username}
                     showsVerticalScrollIndicator={false}
-                    contentContainerClassName="pb-20"
+                    contentContainerClassName="pb-24"
                     refreshControl={
                         <RefreshControl
                             refreshing={refreshing}
                             onRefresh={onRefresh}
                             tintColor={refreshing ? undefined : 'transparent'}
+                            colors={['#25D366']}
                         />
                     }
                 />
             )}
+
+            {/* WhatsApp FAB */}
+            <Pressable
+                onPress={handleExplore}
+                className="absolute bottom-6 right-4 w-[56px] h-[56px] rounded-2xl items-center justify-center active:scale-95"
+                style={{ backgroundColor: '#25D366' }}
+            >
+                <Icon as={MaterialIcons} name="chat" size={24} className="text-white" />
+            </Pressable>
         </View>
     );
 };
