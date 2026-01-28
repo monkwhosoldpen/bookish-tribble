@@ -1,5 +1,5 @@
 import { Button } from '@/registry/nativewind/components/ui/button';
-import * as Haptics from 'expo-haptics';
+import { useHaptics } from '@/contexts/HapticsContext';
 import { useColorScheme } from 'nativewind';
 import { Image, type ImageStyle } from 'react-native';
 
@@ -15,9 +15,10 @@ const IMAGE_STYLE: ImageStyle = {
 
 export function ThemeToggle() {
   const { colorScheme, setColorScheme } = useColorScheme();
+  const { impact } = useHaptics();
 
   function toggleColorScheme() {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    impact();
     const newTheme = colorScheme === 'dark' ? 'light' : 'dark';
     setColorScheme(newTheme);
   }

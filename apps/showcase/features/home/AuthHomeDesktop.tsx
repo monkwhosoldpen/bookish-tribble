@@ -3,7 +3,7 @@ import { View, Pressable, FlatList } from 'react-native';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { cn } from '@/registry/nativewind/lib/utils';
 import { router } from 'expo-router';
-import * as Haptics from 'expo-haptics';
+import { useHaptics } from '@/contexts/HapticsContext';
 import { useHomeFeed, ChatTab, ChatItem } from '@/hooks/useHomeFeed';
 
 export const AuthHomeDesktop = function AuthHomeDesktop() {
@@ -16,10 +16,11 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
         handleExplore
     } = useHomeFeed();
 
+    const { impact } = useHaptics();
     const [selectedChat, setSelectedChat] = React.useState<ChatItem | null>(null);
 
     const handleChatSelect = (chat: ChatItem) => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+        impact();
         setSelectedChat(chat);
         // Navigate to username route when chat is selected
         router.push(`/${chat.username}`);
@@ -125,7 +126,7 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
                         <View className="w-full gap-3">
                             <Pressable
                                 onPress={() => {
-                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => { });
+                                    impact();
                                     router.push(`/${selectedChat.username}`);
                                 }}
                                 className="w-full py-4 rounded-2xl bg-primary items-center justify-center active:scale-[0.98] transition-transform"
@@ -134,7 +135,7 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
                             </Pressable>
                             <Pressable
                                 onPress={() => {
-                                    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+                                    impact();
                                     router.push(`/${selectedChat.username}`);
                                 }}
                                 className="w-full py-4 rounded-2xl bg-transparent border border-border items-center justify-center active:bg-muted/20"

@@ -4,7 +4,7 @@ import { cn } from '@/registry/nativewind/lib/utils';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
-import * as Haptics from 'expo-haptics';
+import { useHaptics } from '@/contexts/HapticsContext';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 export type TabType = 'home' | 'explore' | 'settings';
@@ -17,12 +17,12 @@ interface BottomNavProps {
 
 export const BottomNav = React.memo(function BottomNav({ activeTab }: BottomNavProps) {
     const insets = useSafeAreaInsets();
+    const { impact } = useHaptics();
 
     const handlePress = (tab: TabType) => {
         if (tab === activeTab) return;
 
-        // Add haptic feedback
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+        impact();
 
         switch (tab) {
             case 'home':

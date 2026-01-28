@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import * as z from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
-import * as Haptics from 'expo-haptics';
+import { useHaptics } from '@/contexts/HapticsContext';
 import Animated, { useSharedValue, useAnimatedStyle, withSequence, withTiming, withRepeat } from 'react-native-reanimated';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
@@ -28,6 +28,7 @@ interface LoginFormProps {
 export const LoginForm = React.memo(function LoginForm({ onLogin }: LoginFormProps) {
     const { signIn, loading: authLoading } = useAuth();
     const { showError, showSuccess } = useToast();
+    const { impact, error: hapticError, success: hapticSuccess } = useHaptics();
 
     // Animation Values
     const shakeTranslateX = useSharedValue(0);
@@ -38,7 +39,7 @@ export const LoginForm = React.memo(function LoginForm({ onLogin }: LoginFormPro
             withRepeat(withTiming(10, { duration: 100 }), 3, true),
             withTiming(0, { duration: 50 })
         );
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+        hapticError();
     };
 
     const formAnimatedStyle = useAnimatedStyle(() => {
@@ -61,9 +62,9 @@ export const LoginForm = React.memo(function LoginForm({ onLogin }: LoginFormPro
 
     const onSubmit = async (data: LoginFormValues) => {
         try {
-            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            impact();
             await signIn(data.email, data.password);
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            hapticSuccess();
             showSuccess('Welcome back! You are now signed in.');
             onLogin?.();
         } catch (err: unknown) {

@@ -13,7 +13,7 @@ import { useNotificationEngine } from '@/hooks/useNotificationEngine';
 import { supabase } from '@/lib/supabase';
 import { CENTRAL_API_URL } from '@/lib/env';
 import { PREFERENCE_KEYS } from '@/features/settings/constants';
-import { haptics } from '@/lib/haptics';
+import { useHaptics } from './HapticsContext';
 
 /**
  * Notification Context - Dual Platform Support
@@ -52,6 +52,7 @@ const NotificationContext = createContext<NotificationState | undefined>(undefin
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const { user, loading: authLoading } = useAuth();
   const engine = useNotificationEngine();
+  const { success: hapticSuccess } = useHaptics();
   const [enabled, setEnabled] = useState(false);
   const [pushToken, setPushToken] = useState<string | null>(null);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -210,7 +211,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       try {
         unsubscribe = engine.setupForegroundListener((message: any) => {
           console.log('[NOTIFS] Foreground message:', message);
-          haptics.success();
+          hapticSuccess();
         });
       } catch (error) {
         if (__DEV__) { console.error('[NOTIFS] Failed to setup foreground listener:', error); }

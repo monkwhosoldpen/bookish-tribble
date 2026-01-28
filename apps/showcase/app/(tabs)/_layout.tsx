@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import { useColorScheme } from 'nativewind';
+import { NAV_THEME } from '@showcase/lib/theme';
 
 export default function TabLayout() {
   const { colorScheme } = useColorScheme();
@@ -9,7 +10,7 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         contentStyle: {
-          backgroundColor: colorScheme === 'dark' ? '#09090b' : '#ffffff',
+          backgroundColor: NAV_THEME[colorScheme ?? 'light'].colors.background,
         },
       }}
     >

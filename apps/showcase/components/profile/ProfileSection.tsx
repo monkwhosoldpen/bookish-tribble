@@ -6,17 +6,18 @@ import { Image } from 'expo-image';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useProfileContext } from '@/features/profile/ProfileContext';
 import * as Clipboard from 'expo-clipboard';
-import * as Haptics from 'expo-haptics';
+import { useHaptics } from '@/contexts/HapticsContext';
 import { cn } from '@/registry/nativewind/lib/utils';
 
 export function ProfileSection() {
     const { profileData, username } = useProfileContext();
+    const { success } = useHaptics();
 
     const handleCopyUsername = async () => {
         if (!username) return;
 
         await Clipboard.setStringAsync(username);
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        success();
         // You could add a toast here if needed
     };
 
@@ -107,7 +108,7 @@ export function ProfileSection() {
                         {/* Action Buttons */}
                         <View className="mt-6 flex-row gap-3">
                             <Pressable className="flex-1 bg-primary rounded-xl p-4 items-center shadow-lg shadow-primary/20">
-                                <Text className="text-white font-bold">Follow</Text>
+                                <Text className="text-primary-foreground font-bold">Follow</Text>
                             </Pressable>
                             <Pressable className="flex-1 bg-muted/80 rounded-xl p-4 items-center border border-border/50">
                                 <Text className="text-foreground font-bold">Message</Text>

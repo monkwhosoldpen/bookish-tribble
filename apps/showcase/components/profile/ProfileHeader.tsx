@@ -4,12 +4,13 @@ import { Text } from '@/registry/nativewind/components/ui/text';
 import { Icon } from '@/components/ui/Icon';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useRouter } from 'expo-router';
-import * as Haptics from 'expo-haptics';
+import { useHaptics } from '@/contexts/HapticsContext';
 import { useProfileContext } from '@/features/profile/ProfileContext';
 
 export function ProfileHeader() {
     const { profileData, sidebarChannels, selectedIndex } = useProfileContext();
     const router = useRouter();
+    const { impact } = useHaptics();
     const selectedChannel = sidebarChannels[selectedIndex];
 
     const isMain = !selectedChannel || selectedChannel.id === 'main';
@@ -22,7 +23,7 @@ export function ProfileHeader() {
                 <View className="flex-row items-center gap-3">
                     <Pressable
                         onPress={() => {
-                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            impact();
                             router.back();
                         }}
                         className="active:opacity-60 transition-opacity"

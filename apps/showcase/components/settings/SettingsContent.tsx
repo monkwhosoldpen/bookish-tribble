@@ -3,6 +3,7 @@ import { View, ScrollView, Switch, ActivityIndicator, Pressable } from 'react-na
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { cn } from '@/registry/nativewind/lib/utils';
 import { useColorScheme } from 'nativewind';
+import { THEME } from '@showcase/lib/theme';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Icon } from '@/components/ui/Icon';
 import { useNotifications } from '@/hooks/useNotifications';
@@ -219,9 +220,9 @@ function SettingsSwitchRow({
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: 'hsl(214.3 31.8% 91.4%)', true: 'hsl(221.2 83.2% 53.3%)' }}
-        thumbColor={'hsl(0 0% 100%)'}
-        ios_backgroundColor="hsl(214.3 31.8% 91.4%)"
+        trackColor={{ false: THEME.light.muted, true: THEME.light.primary }}
+        thumbColor={THEME.light.background}
+        ios_backgroundColor={THEME.light.muted}
       />
     </View>
   );
@@ -256,7 +257,7 @@ function SettingsActionRow({
         isDestructive ? "bg-red-500/10" : "bg-primary/10"
       )}>
         {isLoading ? (
-          <ActivityIndicator size="small" color={isDestructive ? "#ef4444" : undefined} />
+          <ActivityIndicator size="small" color={isDestructive ? THEME.light.destructive : undefined} />
         ) : (
           <Icon 
             as={MaterialIcons} 
