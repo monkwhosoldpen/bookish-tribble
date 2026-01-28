@@ -49,7 +49,7 @@ export function EmptyState({ icon, title, description, action, className }: Empt
 export function EmptyChatsState({ onExplore }: { onExplore: () => void }) {
     return (
         <EmptyState
-            icon={<MaterialIcons name="chat" size={32} className="text-muted-foreground" />}
+            icon={<MaterialIcons name="inbox" size={32} className="text-muted-foreground" />}
             title="No conversations yet"
             description="Start exploring and following channels to see your conversations here. Your chat history will appear as you interact with the community."
             action={{
@@ -91,7 +91,7 @@ export function EmptyFollowingState({ onExplore }: { onExplore: () => void }) {
 export function EmptyFavouritesState({ onExplore }: { onExplore: () => void }) {
     return (
         <EmptyState
-            icon={<MaterialIcons name="people" size={32} className="text-muted-foreground" />}
+            icon={<MaterialIcons name="star" size={32} className="text-muted-foreground" />}
             title="No favorite channels"
             description="Save your favorite channels to quickly access their content. Build your personal collection of the best channels and content creators."
             action={{
