@@ -39,20 +39,20 @@ export function ConstructionView({ name, onBack }: ConstructionViewProps) {
                 {/* Features List */}
                 <View className="w-full space-y-3 mb-8">
                     <View className="flex-row items-center gap-3">
-                        <View className="w-6 h-6 bg-green-500/10 rounded-full items-center justify-center">
-                            <Icon as={MaterialIcons} name="check" size={12} className="text-green-600" />
+                        <View className="w-6 h-6 bg-success/10 rounded-full items-center justify-center">
+                            <Icon as={MaterialIcons} name="check" size={12} className="text-success" />
                         </View>
                         <Text className="text-foreground text-sm">Enhanced security features</Text>
                     </View>
                     <View className="flex-row items-center gap-3">
-                        <View className="w-6 h-6 bg-green-500/10 rounded-full items-center justify-center">
-                            <Icon as={MaterialIcons} name="check" size={12} className="text-green-600" />
+                        <View className="w-6 h-6 bg-success/10 rounded-full items-center justify-center">
+                            <Icon as={MaterialIcons} name="check" size={12} className="text-success" />
                         </View>
                         <Text className="text-foreground text-sm">Real-time collaboration</Text>
                     </View>
                     <View className="flex-row items-center gap-3">
-                        <View className="w-6 h-6 bg-green-500/10 rounded-full items-center justify-center">
-                            <Icon as={MaterialIcons} name="check" size={12} className="text-green-600" />
+                        <View className="w-6 h-6 bg-success/10 rounded-full items-center justify-center">
+                            <Icon as={MaterialIcons} name="check" size={12} className="text-success" />
                         </View>
                         <Text className="text-foreground text-sm">Advanced analytics</Text>
                     </View>

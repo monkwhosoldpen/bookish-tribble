@@ -52,10 +52,10 @@ interface SuccessToastProps {
 
 export function SuccessToast({ message, onDismiss }: SuccessToastProps) {
     return (
-        <View className="bg-background border border-green-500/20 rounded-lg p-4 mx-4 mb-4 shadow-lg">
+        <View className="bg-background border border-success/20 rounded-lg p-4 mx-4 mb-4 shadow-lg">
             <View className="flex-row items-start gap-3">
-                <View className="w-5 h-5 bg-green-500/10 rounded-full items-center justify-center mt-0.5">
-                    <Text className="text-green-600 dark:text-green-400 font-bold text-xs">✓</Text>
+                <View className="w-5 h-5 bg-success/10 rounded-full items-center justify-center mt-0.5">
+                    <Text className="text-success font-bold text-xs">✓</Text>
                 </View>
                 <View className="flex-1">
                     <Text className="text-foreground font-medium text-sm leading-relaxed">

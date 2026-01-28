@@ -73,7 +73,7 @@ export function ScreenWrapper({
                 )}
 
                 <View className="flex-1 w-full flex-row justify-center overflow-hidden">
-                    <View className={`flex-1 w-full relative ${fullWidth ? '' : 'max-w-2xl border-x border-zinc-100 dark:border-zinc-800'}`}>
+                    <View className={`flex-1 w-full relative ${fullWidth ? '' : 'max-w-2xl border-x border-border'}`}>
                         {isMobile ? mobileContent : desktopContent}
                     </View>
                 </View>

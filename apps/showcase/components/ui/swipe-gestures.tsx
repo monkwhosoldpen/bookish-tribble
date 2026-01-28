@@ -199,7 +199,7 @@ export function SwipeableChatItem({
                             },
                         ],
                     }}
-                    className="bg-blue-500 items-center justify-center"
+                    className="bg-primary items-center justify-center"
                 >
                     {leftAction}
                 </Animated.View>
@@ -229,7 +229,7 @@ export function SwipeableChatItem({
                             },
                         ],
                     }}
-                    className="bg-red-500 items-center justify-center"
+                    className="bg-destructive items-center justify-center"
                 >
                     {rightAction}
                 </Animated.View>

@@ -7,6 +7,8 @@ import * as Haptics from 'expo-haptics';
 import { useHomeFeed, ChatTab, ChatItem } from '@/hooks/useHomeFeed';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Icon } from '@/components/ui/Icon';
+import { useColorScheme } from 'nativewind';
+import { COLOR_TOKENS } from '@/lib/design-tokens';
 
 export const AuthHomeDesktop = function AuthHomeDesktop() {
     const {
@@ -19,6 +21,9 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
     } = useHomeFeed();
 
     const [selectedChat, setSelectedChat] = React.useState<ChatItem | null>(null);
+    const { colorScheme } = useColorScheme();
+    const mutedColor = colorScheme === 'dark' ? COLOR_TOKENS.dark.muted : COLOR_TOKENS.light.muted;
+    const secondaryColor = colorScheme === 'dark' ? COLOR_TOKENS.dark.secondary : COLOR_TOKENS.light.secondary;
 
     const handleChatSelect = (chat: ChatItem) => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
@@ -46,7 +51,7 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
             )}
         >
             {/* Avatar */}
-            <View className="h-12 w-12 rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#25D366' }}>
+            <View className="h-12 w-12 rounded-full items-center justify-center mr-3 bg-primary">
                 <Text className="text-white font-bold text-lg">
                     {chat.username.charAt(0).toUpperCase()}
                 </Text>
@@ -59,20 +64,20 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
                     </Text>
                     <Text
                         className="text-[12px]"
-                        style={{ color: chat.unreadCount ? '#25D366' : '#8696A0' }}
+                        style={{ color: chat.unreadCount ? COLOR_TOKENS.primary : mutedColor }}
                     >
                         {chat.timestamp}
                     </Text>
                 </View>
                 <View className="flex-row items-center justify-between mt-1">
                     <View className="flex-row items-center flex-1 mr-4">
-                        <Icon as={MaterialIcons} name="done-all" size={16} color="#53BDEB" style={{ marginRight: 3 }} />
+                        <Icon as={MaterialIcons} name="done-all" size={16} color={COLOR_TOKENS.primary} style={{ marginRight: 3 }} />
                         <Text className="text-[13px] text-muted-foreground flex-1" numberOfLines={1}>
                             {chat.lastMessage}
                         </Text>
                     </View>
                     {chat.unreadCount ? (
-                        <View className="min-w-[20px] h-5 rounded-full items-center justify-center px-1.5" style={{ backgroundColor: '#25D366' }}>
+                        <View className="min-w-[20px] h-5 rounded-full items-center justify-center px-1.5 bg-primary">
                             <Text className="text-white text-xs font-bold">
                                 {chat.unreadCount}
                             </Text>
@@ -89,7 +94,7 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
             <View className="w-[35%] min-w-[320px] max-w-[420px] border-r border-border/30 bg-background">
                 {/* Sidebar header */}
                 <View className="h-[60px] flex-row items-center justify-between px-4 border-b border-border/20">
-                    <View className="h-10 w-10 rounded-full items-center justify-center" style={{ backgroundColor: '#25D366' }}>
+                    <View className="h-10 w-10 rounded-full items-center justify-center bg-primary">
                         <Text className="text-white font-bold text-base">U</Text>
                     </View>
                     <View className="flex-row items-center gap-2">
@@ -119,7 +124,7 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
                             className={cn(
                                 'px-3 py-1.5 rounded-full',
                                 activeTab === tab
-                                    ? 'bg-[#25D366]/15'
+                                    ? 'bg-primary/10'
                                     : 'bg-foreground/5'
                             )}
                         >
@@ -131,12 +136,12 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
                                             ? 'font-bold'
                                             : 'text-muted-foreground'
                                     )}
-                                    style={activeTab === tab ? { color: '#075E54' } : undefined}
+                                    style={activeTab === tab ? { color: COLOR_TOKENS.primary } : undefined}
                                 >
                                     {tab}
                                 </Text>
                                 {counts[tab] > 0 && (
-                                    <View className="min-w-[16px] h-4 rounded-full items-center justify-center px-1" style={{ backgroundColor: '#25D366' }}>
+                                    <View className="min-w-[16px] h-4 rounded-full items-center justify-center px-1 bg-primary">
                                         <Text className="text-white text-[10px] font-bold">
                                             {counts[tab] > 99 ? '99+' : counts[tab]}
                                         </Text>
@@ -168,10 +173,10 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
             </View>
 
             {/* Right panel - chat detail / empty state */}
-            <View className="flex-1 items-center justify-center" style={{ backgroundColor: '#F0F2F5' }}>
+            <View className="flex-1 items-center justify-center bg-secondary">
                 {selectedChat ? (
                     <View className="items-center w-full max-w-sm">
-                        <View className="h-24 w-24 rounded-full items-center justify-center mb-6" style={{ backgroundColor: '#25D366' }}>
+                        <View className="h-24 w-24 rounded-full items-center justify-center mb-6 bg-primary">
                             <Text className="text-white font-bold text-3xl">
                                 {selectedChat.username.charAt(0).toUpperCase()}
                             </Text>
@@ -187,8 +192,7 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
                                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => { });
                                     router.push(`/${selectedChat.username}`);
                                 }}
-                                className="w-full py-4 rounded-xl items-center justify-center active:scale-[0.98]"
-                                style={{ backgroundColor: '#25D366' }}
+                                className="w-full py-4 rounded-xl items-center justify-center active:scale-[0.98] bg-primary"
                             >
                                 <Text className="text-white font-bold text-[16px]">Open Conversation</Text>
                             </Pressable>
@@ -206,7 +210,7 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
                 ) : (
                     <View className="items-center max-w-md px-12">
                         <View className="w-[320px] h-[200px] items-center justify-center mb-6">
-                            <Icon as={MaterialIcons} name="lock" size={18} color="#8696A0" />
+                            <Icon as={MaterialIcons} name="lock" size={18} color={mutedColor} />
                         </View>
                         <Text className="text-[32px] font-light text-foreground/70 mb-3 text-center tracking-tight">
                             Showcase Web
@@ -217,7 +221,7 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
                         </Text>
 
                         <View className="flex-row items-center gap-1.5">
-                            <Icon as={MaterialIcons} name="lock" size={12} color="#8696A0" />
+                            <Icon as={MaterialIcons} name="lock" size={12} color={mutedColor} />
                             <Text className="text-[13px] text-muted-foreground">End-to-end encrypted</Text>
                         </View>
                     </View>

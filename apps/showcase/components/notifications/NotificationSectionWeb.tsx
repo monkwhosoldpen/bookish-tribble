@@ -8,6 +8,8 @@ import { useNotifications } from '@/contexts/NotificationContext';
 import { PreferenceRow } from './PreferenceRow';
 import { PREFERENCE_KEYS } from '@/features/settings/constants';
 import { Platform } from 'react-native';
+import { useColorScheme } from 'nativewind';
+import { COLOR_TOKENS } from '@/lib/design-tokens';
 
 export const NotificationSectionWeb = React.memo(function NotificationSectionWeb() {
     const {
@@ -19,6 +21,8 @@ export const NotificationSectionWeb = React.memo(function NotificationSectionWeb
         preferences,
         updatePreference
     } = useNotifications();
+    const { colorScheme } = useColorScheme();
+    const foregroundColor = colorScheme === 'dark' ? COLOR_TOKENS.dark.foreground : COLOR_TOKENS.light.foreground;
 
     const onToggle = async () => {
         if (enabled) {
@@ -34,44 +38,44 @@ export const NotificationSectionWeb = React.memo(function NotificationSectionWeb
     }
 
     return (
-        <View className="bg-white dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-900/50 rounded-[2.5rem] px-6 py-8 mx-4 my-4 shadow-sm shadow-black/5">
+        <View className="bg-card border border-border rounded-[2.5rem] px-6 py-8 mx-4 my-4 shadow-sm shadow-black/5">
             <View className="flex-row items-center gap-3 mb-6">
                 <View className="w-10 h-10 rounded-2xl bg-primary/10 border border-primary/20 items-center justify-center">
                     <Icon as={MaterialIcons} name="public" size={20} className="text-primary" />
                 </View>
                 <View>
-                    <Text className="text-xl font-black tracking-tighter">Live Pulse</Text>
-                    <Text className="text-[12px] text-zinc-400 font-bold uppercase tracking-[0.15em]">Global Delivery</Text>
+                    <Text className="text-xl font-black tracking-tighter text-foreground">Live Pulse</Text>
+                    <Text className="text-[12px] text-muted-foreground font-bold uppercase tracking-[0.15em]">Global Delivery</Text>
                 </View>
             </View>
 
             <View className={cn(
                 "p-6 rounded-3xl border mb-6",
-                enabled ? "bg-primary/5 border-primary/20" : "bg-white dark:bg-zinc-950 border-zinc-200 dark:border-zinc-800"
+                enabled ? "bg-primary/5 border-primary/20" : "bg-card border-border"
             )}>
                 <View className="flex-row items-center gap-4 mb-4">
                     <View className={cn(
                         "w-12 h-12 rounded-2xl items-center justify-center shadow-md",
-                        enabled ? "bg-primary shadow-primary/20" : "bg-zinc-100 dark:bg-zinc-900"
+                        enabled ? "bg-primary shadow-primary/20" : "bg-secondary"
                     )}>
-                        <Icon 
-                            as={MaterialIcons} 
-                            name={enabled ? "link" : "link-off"} 
-                            size={24} 
-                            className={enabled ? "text-white" : "text-zinc-500"} 
+                        <Icon
+                            as={MaterialIcons}
+                            name={enabled ? "link" : "link-off"}
+                            size={24}
+                            className={enabled ? "text-white" : "text-muted-foreground"}
                         />
                     </View>
                     <View className="flex-1">
-                        <Text className="text-lg font-black tracking-tight">
+                        <Text className="text-lg font-black tracking-tight text-foreground">
                             {enabled ? 'Pulse: Synchronized' : 'Pulse: Paused'}
                         </Text>
-                        <Text className="text-zinc-500 text-sm font-semibold tracking-tight">
+                        <Text className="text-muted-foreground text-sm font-semibold tracking-tight">
                             Cloud-to-browser stream
                         </Text>
                     </View>
                 </View>
 
-                <Text className="text-[14px] text-zinc-600 dark:text-zinc-400 leading-5 mb-6 font-medium">
+                <Text className="text-[14px] text-muted-foreground leading-5 mb-6 font-medium">
                     Keep your components updated in real-time across all your browsers using secure cloud delivery.
                 </Text>
 
@@ -81,12 +85,12 @@ export const NotificationSectionWeb = React.memo(function NotificationSectionWeb
                     className={cn(
                         "h-14 rounded-2xl flex-row items-center justify-center gap-2 px-8 self-stretch border shadow-sm",
                         enabled
-                            ? "bg-zinc-100 dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800"
+                            ? "bg-secondary border-border"
                             : "bg-primary border-primary"
                     )}
                 >
                     {isRegistering ? (
-                        <ActivityIndicator size="small" color={enabled ? "black" : "white"} />
+                        <ActivityIndicator size="small" color={enabled ? foregroundColor : "#FFFFFF"} />
                     ) : (
                         <>
                             <Text className={cn("font-black text-base", enabled ? "text-foreground" : "text-white")}>
@@ -103,8 +107,8 @@ export const NotificationSectionWeb = React.memo(function NotificationSectionWeb
             {/* Preference Control Section */}
             <View className="mb-6">
                 <View className="flex-row items-center gap-2 mb-4 px-2">
-                    <Icon as={MaterialIcons} name="settings" size={16} className="text-zinc-400" />
-                    <Text className="text-xs font-bold uppercase tracking-widest text-zinc-400">Notification Settings</Text>
+                    <Icon as={MaterialIcons} name="settings" size={16} className="text-muted-foreground" />
+                    <Text className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Notification Settings</Text>
                 </View>
 
                 <View className="gap-2">
@@ -135,9 +139,9 @@ export const NotificationSectionWeb = React.memo(function NotificationSectionWeb
             </View>
 
             {token && (
-                <View className="p-4 rounded-3xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
-                    <Text className="text-[12px] font-black uppercase tracking-widest text-zinc-500 mb-1">Sync Connection ID</Text>
-                    <Text className="text-[13px] font-mono text-zinc-600 dark:text-zinc-400" numberOfLines={1}>
+                <View className="p-4 rounded-3xl bg-secondary border border-border">
+                    <Text className="text-[12px] font-black uppercase tracking-widest text-muted-foreground mb-1">Sync Connection ID</Text>
+                    <Text className="text-[13px] font-mono text-muted-foreground" numberOfLines={1}>
                         {token}
                     </Text>
                 </View>

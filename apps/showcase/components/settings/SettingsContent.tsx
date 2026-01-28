@@ -369,7 +369,7 @@ function SidebarItem({
       disabled={isLoading}
       className={cn(
         "flex-row items-center gap-3 px-4 py-3 active:bg-foreground/5",
-        active && "bg-foreground/5 border-l-4 border-black"
+        active && "bg-foreground/5 border-l-4 border-primary"
       )}
     >
       {isLoading ? (
@@ -380,13 +380,13 @@ function SidebarItem({
           name={icon as any}
           size={20}
           className={cn(
-            isDestructive ? "text-red-500" : active ? "text-foreground" : "text-muted-foreground"
+            isDestructive ? "text-destructive" : active ? "text-foreground" : "text-muted-foreground"
           )}
         />
       )}
       <Text className={cn(
         "text-base",
-        isDestructive ? "text-red-500 font-medium" : active ? "text-foreground font-bold" : "text-muted-foreground font-medium"
+        isDestructive ? "text-destructive font-medium" : active ? "text-foreground font-bold" : "text-muted-foreground font-medium"
       )}>{label}</Text>
     </Pressable>
   );
@@ -448,19 +448,19 @@ function SettingsActionRow({
       className="flex-row items-center px-4 py-3 border-b border-border/20 active:bg-foreground/5"
     >
       {isLoading ? (
-        <ActivityIndicator size="small" color={isDestructive ? "#ef4444" : undefined} className="mr-3" />
+        <ActivityIndicator size="small" color={isDestructive ? COLOR_TOKENS.destructive : undefined} className="mr-3" />
       ) : (
         <Icon
           as={MaterialIcons}
           name={icon as any}
           size={20}
-          className={cn("mr-3", isDestructive ? "text-red-500" : "text-muted-foreground")}
+          className={cn("mr-3", isDestructive ? "text-destructive" : "text-muted-foreground")}
         />
       )}
       <View className="flex-1">
         <Text className={cn(
           "text-base font-normal",
-          isDestructive ? "text-red-500" : "text-foreground"
+          isDestructive ? "text-destructive" : "text-foreground"
         )}>{label}</Text>
         <Text className="text-sm text-muted-foreground mt-0.5">{description}</Text>
       </View>
@@ -468,7 +468,7 @@ function SettingsActionRow({
         as={MaterialIcons}
         name="chevron-right"
         size={18}
-        className={cn("text-muted-foreground/40", isDestructive && "text-red-300/60")}
+        className={cn("text-muted-foreground/40", isDestructive && "text-destructive/60")}
       />
     </Pressable>
   );

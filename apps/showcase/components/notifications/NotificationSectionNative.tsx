@@ -89,7 +89,7 @@ export const NotificationSectionNative = React.memo(function NotificationSection
                         "h-14 rounded-2xl flex-row items-center justify-center gap-2 px-8 self-stretch border active:scale-[0.98]",
                         enabled
                             ? "bg-background border-border shadow-sm active:bg-muted/50"
-                            : "bg-primary border-primary shadow-lg shadow-blue-500/20"
+                            : "bg-primary border-primary shadow-lg shadow-primary/20"
                     )}
                 >
                     {isRegistering ? (
