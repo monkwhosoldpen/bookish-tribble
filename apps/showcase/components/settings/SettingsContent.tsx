@@ -55,143 +55,328 @@ export function SettingsContent({ isMobile, onSignOut, isSigningOut }: SettingsC
     }
   };
 
-  const containerClasses = cn(
-    "flex-1 bg-background",
-    isMobile ? "px-4" : "px-8"
-  );
+  if (isMobile) {
+    return <SettingsMobile
+      NotificationSection={NotificationSection}
+      autoSyncEnabled={autoSyncEnabled}
+      onAutoSyncToggle={handleAutoSyncToggle}
+      colorScheme={colorScheme}
+      onThemeToggle={handleThemeToggle}
+      hapticsEnabled={hapticsEnabled}
+      onHapticToggle={handleHapticToggle}
+      onSignOut={handleSignOut}
+      isSigningOut={isSigningOut}
+    />;
+  }
 
-  const contentClasses = cn(
-    "flex-1",
-    isMobile ? "py-6" : "py-8"
-  );
+  return <SettingsDesktop
+    NotificationSection={NotificationSection}
+    autoSyncEnabled={autoSyncEnabled}
+    onAutoSyncToggle={handleAutoSyncToggle}
+    colorScheme={colorScheme}
+    onThemeToggle={handleThemeToggle}
+    hapticsEnabled={hapticsEnabled}
+    onHapticToggle={handleHapticToggle}
+    onSignOut={handleSignOut}
+    isSigningOut={isSigningOut}
+  />;
+}
 
-  const gridClasses = isMobile 
-    ? "gap-4" 
-    : "flex-row flex-wrap gap-4";
+// Shared props for both layouts
+interface SettingsLayoutProps {
+  NotificationSection: React.ComponentType;
+  autoSyncEnabled: boolean;
+  onAutoSyncToggle: (value: boolean) => void;
+  colorScheme: string | undefined;
+  onThemeToggle: (value: boolean) => void;
+  hapticsEnabled: boolean;
+  onHapticToggle: (value: boolean) => void;
+  onSignOut: () => void;
+  isSigningOut: boolean;
+}
 
-  const itemWidthClasses = isMobile 
-    ? "w-full" 
-    : "w-full lg:w-[48%]";
-
+// ─── MOBILE: Twitter-style flat list ───
+function SettingsMobile(props: SettingsLayoutProps) {
   return (
-    <View className={containerClasses}>
-      <ScrollView 
-        className="flex-1" 
-        showsVerticalScrollIndicator={false}
-        contentContainerClassName={contentClasses}
-      >
-        <View className={cn("max-w-4xl mx-auto w-full", gridClasses)}>
-          
-          {/* Notifications Setting */}
-          <View className={itemWidthClasses}>
-            <NotificationSection />
-          </View>
+    <View className="flex-1 bg-background">
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
 
-          {/* Auto Sync Setting */}
-          <View className={itemWidthClasses}>
-            <SettingsCard>
-              <SettingsSwitchRow
-                icon="sync"
-                label="Auto Sync"
-                description={autoSyncEnabled ? "Automatic data sync enabled" : "Manual sync only"}
-                value={autoSyncEnabled}
-                onValueChange={handleAutoSyncToggle}
-              />
-            </SettingsCard>
-          </View>
-
-          {/* Theme Setting */}
-          <View className={itemWidthClasses}>
-            <SettingsCard>
-              <SettingsSwitchRow
-                icon="dark-mode"
-                label="Dark Mode"
-                description={colorScheme === 'dark' ? 'Dark theme active' : 'Light theme active'}
-                value={colorScheme === 'dark'}
-                onValueChange={handleThemeToggle}
-              />
-            </SettingsCard>
-          </View>
-
-          {/* Haptic Feedback Setting */}
-          <View className={itemWidthClasses}>
-            <SettingsCard>
-              <SettingsSwitchRow
-                icon="vibration"
-                label="Haptic Feedback"
-                description={hapticsEnabled ? "Touch feedback enabled" : "Touch feedback disabled"}
-                value={hapticsEnabled}
-                onValueChange={handleHapticToggle}
-              />
-            </SettingsCard>
-          </View>
-
-          {/* Account Actions */}
-          <View className={cn(itemWidthClasses, isMobile ? "mt-6" : "mt-8")}>
-            <SettingsCard>
-              <View className="space-y-2">
-                <SettingsActionRow
-                  icon="account-circle"
-                  label="Account"
-                  description="Manage your account settings"
-                  onPress={() => {}}
-                />
-                <View className="h-px bg-border/50 mx-4" />
-                <SettingsActionRow
-                  icon="help"
-                  label="Help & Support"
-                  description="Get help and contact support"
-                  onPress={() => {}}
-                />
-                <View className="h-px bg-border/50 mx-4" />
-                <SettingsActionRow
-                  icon="info"
-                  label="About"
-                  description="App version and information"
-                  onPress={() => {}}
-                />
-              </View>
-            </SettingsCard>
-          </View>
-
-          {/* Sign Out */}
-          <View className={cn(itemWidthClasses, isMobile ? "mt-4" : "mt-8")}>
-            <SettingsCard variant="destructive">
-              <SettingsActionRow
-                icon="logout"
-                label="Sign Out"
-                description="Sign out of your account"
-                onPress={handleSignOut}
-                isLoading={isSigningOut}
-                isDestructive
-              />
-            </SettingsCard>
-          </View>
-
+        {/* Notifications */}
+        <SettingsSectionHeader label="Notifications" />
+        <View>
+          <props.NotificationSection />
         </View>
 
-        {/* Extra spacing for scroll */}
+        {/* Preferences */}
+        <SettingsSectionHeader label="Preferences" />
+        <View className="border-b border-border/30">
+          <SettingsSwitchRow
+            icon="sync"
+            label="Auto Sync"
+            description="Sync data automatically"
+            value={props.autoSyncEnabled}
+            onValueChange={props.onAutoSyncToggle}
+          />
+          <SettingsSwitchRow
+            icon="dark-mode"
+            label="Dark Mode"
+            description={props.colorScheme === 'dark' ? 'On' : 'Off'}
+            value={props.colorScheme === 'dark'}
+            onValueChange={props.onThemeToggle}
+          />
+          <SettingsSwitchRow
+            icon="vibration"
+            label="Haptic Feedback"
+            description={props.hapticsEnabled ? 'On' : 'Off'}
+            value={props.hapticsEnabled}
+            onValueChange={props.onHapticToggle}
+          />
+        </View>
+
+        {/* Account */}
+        <SettingsSectionHeader label="Account" />
+        <View className="border-b border-border/30">
+          <SettingsActionRow
+            icon="account-circle"
+            label="Your account"
+            description="Account information, password"
+            onPress={() => {}}
+          />
+          <SettingsActionRow
+            icon="help-outline"
+            label="Help Center"
+            description="Get help and support"
+            onPress={() => {}}
+          />
+          <SettingsActionRow
+            icon="info-outline"
+            label="About"
+            description="App version and information"
+            onPress={() => {}}
+          />
+        </View>
+
+        {/* Sign Out */}
+        <View className="mt-2">
+          <SettingsActionRow
+            icon="logout"
+            label="Log out"
+            description="Sign out of your account"
+            onPress={props.onSignOut}
+            isLoading={props.isSigningOut}
+            isDestructive
+          />
+        </View>
+
         <View className="h-32" />
       </ScrollView>
     </View>
   );
 }
 
-function SettingsCard({ 
-  children, 
-  variant = "default" 
-}: { 
-  children: React.ReactNode; 
-  variant?: "default" | "destructive" 
-}) {
-  const cardClasses = cn(
-    "rounded-2xl border overflow-hidden",
-    variant === "destructive" 
-      ? "border-red-200/70 dark:border-red-900/50 bg-red-50/40 dark:bg-red-950/15"
-      : "border-border/60 bg-background/80 dark:bg-zinc-900/70"
-  );
+// ─── DESKTOP: Twitter-style sidebar + content ───
+function SettingsDesktop(props: SettingsLayoutProps) {
+  const [activeSection, setActiveSection] = React.useState<string>('preferences');
 
-  return <View className={cardClasses}>{children}</View>;
+  return (
+    <View className="flex-1 flex-row bg-background">
+      {/* Left sidebar - settings nav */}
+      <View className="w-[280px] border-r border-border/30">
+        <ScrollView className="flex-1 py-2" showsVerticalScrollIndicator={false}>
+          <SidebarItem
+            icon="tune"
+            label="Preferences"
+            active={activeSection === 'preferences'}
+            onPress={() => setActiveSection('preferences')}
+          />
+          <SidebarItem
+            icon="notifications-none"
+            label="Notifications"
+            active={activeSection === 'notifications'}
+            onPress={() => setActiveSection('notifications')}
+          />
+          <SidebarItem
+            icon="account-circle"
+            label="Your account"
+            active={activeSection === 'account'}
+            onPress={() => setActiveSection('account')}
+          />
+          <SidebarItem
+            icon="help-outline"
+            label="Help Center"
+            active={activeSection === 'help'}
+            onPress={() => setActiveSection('help')}
+          />
+          <SidebarItem
+            icon="info-outline"
+            label="About"
+            active={activeSection === 'about'}
+            onPress={() => setActiveSection('about')}
+          />
+
+          <View className="h-px bg-border/30 mx-4 my-2" />
+
+          <SidebarItem
+            icon="logout"
+            label="Log out"
+            active={false}
+            onPress={props.onSignOut}
+            isDestructive
+            isLoading={props.isSigningOut}
+          />
+        </ScrollView>
+      </View>
+
+      {/* Right content area */}
+      <View className="flex-1">
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false} contentContainerClassName="py-2">
+          {activeSection === 'preferences' && (
+            <View>
+              <DesktopSectionHeader label="Preferences" />
+              <SettingsSwitchRow
+                icon="sync"
+                label="Auto Sync"
+                description="Sync data automatically"
+                value={props.autoSyncEnabled}
+                onValueChange={props.onAutoSyncToggle}
+              />
+              <SettingsSwitchRow
+                icon="dark-mode"
+                label="Dark Mode"
+                description={props.colorScheme === 'dark' ? 'On' : 'Off'}
+                value={props.colorScheme === 'dark'}
+                onValueChange={props.onThemeToggle}
+              />
+              <SettingsSwitchRow
+                icon="vibration"
+                label="Haptic Feedback"
+                description={props.hapticsEnabled ? 'On' : 'Off'}
+                value={props.hapticsEnabled}
+                onValueChange={props.onHapticToggle}
+              />
+            </View>
+          )}
+
+          {activeSection === 'notifications' && (
+            <View>
+              <DesktopSectionHeader label="Notifications" />
+              <props.NotificationSection />
+            </View>
+          )}
+
+          {activeSection === 'account' && (
+            <View>
+              <DesktopSectionHeader label="Your account" />
+              <SettingsActionRow
+                icon="account-circle"
+                label="Account information"
+                description="See your account information like email and phone number"
+                onPress={() => {}}
+              />
+              <SettingsActionRow
+                icon="lock-outline"
+                label="Change password"
+                description="Change your password at any time"
+                onPress={() => {}}
+              />
+            </View>
+          )}
+
+          {activeSection === 'help' && (
+            <View>
+              <DesktopSectionHeader label="Help Center" />
+              <SettingsActionRow
+                icon="help-outline"
+                label="Help topics"
+                description="Browse help articles and FAQs"
+                onPress={() => {}}
+              />
+              <SettingsActionRow
+                icon="email"
+                label="Contact us"
+                description="Reach out to our support team"
+                onPress={() => {}}
+              />
+            </View>
+          )}
+
+          {activeSection === 'about' && (
+            <View>
+              <DesktopSectionHeader label="About" />
+              <SettingsActionRow
+                icon="info-outline"
+                label="Version"
+                description="0.0.3"
+                onPress={() => {}}
+              />
+            </View>
+          )}
+        </ScrollView>
+      </View>
+    </View>
+  );
+}
+
+// ─── Shared sub-components ───
+
+function SettingsSectionHeader({ label }: { label: string }) {
+  return (
+    <View className="px-4 pt-5 pb-2">
+      <Text className="text-[13px] font-bold text-muted-foreground uppercase tracking-wide">{label}</Text>
+    </View>
+  );
+}
+
+function DesktopSectionHeader({ label }: { label: string }) {
+  return (
+    <View className="px-4 py-3 border-b border-border/30">
+      <Text className="text-[20px] font-bold text-foreground">{label}</Text>
+    </View>
+  );
+}
+
+function SidebarItem({
+  icon,
+  label,
+  active,
+  onPress,
+  isDestructive,
+  isLoading,
+}: {
+  icon: string;
+  label: string;
+  active: boolean;
+  onPress: () => void;
+  isDestructive?: boolean;
+  isLoading?: boolean;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={isLoading}
+      className={cn(
+        "flex-row items-center gap-4 px-6 py-3 active:bg-foreground/5",
+        active && "bg-foreground/5 border-r-2 border-[#1D9BF0]"
+      )}
+    >
+      {isLoading ? (
+        <ActivityIndicator size="small" color="#ef4444" />
+      ) : (
+        <Icon
+          as={MaterialIcons}
+          name={icon as any}
+          size={22}
+          className={cn(
+            isDestructive ? "text-red-500" : active ? "text-foreground" : "text-muted-foreground"
+          )}
+        />
+      )}
+      <Text className={cn(
+        "text-[15px]",
+        isDestructive ? "text-red-500 font-medium" : active ? "text-foreground font-bold" : "text-muted-foreground font-medium"
+      )}>{label}</Text>
+    </Pressable>
+  );
 }
 
 function SettingsSwitchRow({
@@ -208,20 +393,18 @@ function SettingsSwitchRow({
   onValueChange: (value: boolean) => void;
 }) {
   return (
-    <View className="flex-row items-center gap-4 p-4">
-      <View className="w-10 h-10 rounded-xl items-center justify-center bg-primary/10">
-        <Icon as={MaterialIcons} name={icon as any} size={20} className="text-primary" />
-      </View>
+    <View className="flex-row items-center px-4 py-3 border-b border-border/20">
+      <Icon as={MaterialIcons} name={icon as any} size={20} className="text-muted-foreground mr-4" />
       <View className="flex-1">
-        <Text className="text-base font-semibold text-foreground">{label}</Text>
-        <Text className="text-sm text-muted-foreground mt-0.5">{description}</Text>
+        <Text className="text-[15px] font-normal text-foreground">{label}</Text>
+        <Text className="text-[13px] text-muted-foreground mt-0.5">{description}</Text>
       </View>
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: 'hsl(214.3 31.8% 91.4%)', true: 'hsl(221.2 83.2% 53.3%)' }}
-        thumbColor={'hsl(0 0% 100%)'}
-        ios_backgroundColor="hsl(214.3 31.8% 91.4%)"
+        trackColor={{ false: '#CFD9DE', true: '#1D9BF0' }}
+        thumbColor={'#fff'}
+        ios_backgroundColor="#CFD9DE"
       />
     </View>
   );
@@ -243,44 +426,33 @@ function SettingsActionRow({
   isDestructive?: boolean;
 }) {
   return (
-    <Pressable 
+    <Pressable
       onPress={onPress}
       disabled={isLoading}
-      className={cn(
-        "flex-row items-center gap-4 p-4 active:opacity-70 transition-opacity",
-        isDestructive && "active:bg-red-500/5"
-      )}
+      className="flex-row items-center px-4 py-3 border-b border-border/20 active:bg-foreground/5"
     >
-      <View className={cn(
-        "w-10 h-10 rounded-xl items-center justify-center",
-        isDestructive ? "bg-red-500/10" : "bg-primary/10"
-      )}>
-        {isLoading ? (
-          <ActivityIndicator size="small" color={isDestructive ? "#ef4444" : undefined} />
-        ) : (
-          <Icon 
-            as={MaterialIcons} 
-            name={icon as any} 
-            size={20} 
-            className={cn(isDestructive ? "text-red-500" : "text-primary")} 
-          />
-        )}
-      </View>
+      {isLoading ? (
+        <ActivityIndicator size="small" color={isDestructive ? "#ef4444" : undefined} className="mr-4" />
+      ) : (
+        <Icon
+          as={MaterialIcons}
+          name={icon as any}
+          size={20}
+          className={cn("mr-4", isDestructive ? "text-red-500" : "text-muted-foreground")}
+        />
+      )}
       <View className="flex-1">
         <Text className={cn(
-          "text-base font-semibold",
-          isDestructive && "text-red-500"
+          "text-[15px] font-normal",
+          isDestructive ? "text-red-500" : "text-foreground"
         )}>{label}</Text>
-        <Text className="text-sm text-muted-foreground mt-0.5">{description}</Text>
+        <Text className="text-[13px] text-muted-foreground mt-0.5">{description}</Text>
       </View>
-      <Icon 
-        as={MaterialIcons} 
-        name="chevron-right" 
-        size={18} 
-        className={cn(
-          "text-muted-foreground/60",
-          isDestructive && "text-red-300"
-        )} 
+      <Icon
+        as={MaterialIcons}
+        name="chevron-right"
+        size={18}
+        className={cn("text-muted-foreground/40", isDestructive && "text-red-300/60")}
       />
     </Pressable>
   );

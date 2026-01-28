@@ -76,24 +76,24 @@ export const AnimatedLabelInput = ({
             borderColor: interpolateColor(
                 focusAnim.value,
                 [0, 1],
-                ['hsl(215.4 16.3% 46.9%)', 'hsl(221.2 83.2% 53.3%)']
+                ['#CFD9DE', '#1D9BF0']
             ),
             backgroundColor: 'transparent',
-            borderWidth: interpolate(focusAnim.value, [0, 1], [1, 1.5]),
+            borderWidth: interpolate(focusAnim.value, [0, 1], [1, 2]),
         };
     });
 
     return (
-        <View className="gap-2.5">
+        <View className="gap-1.5">
             <Animated.View
-                className="h-[64px] border relative overflow-visible bg-background shadow-none"
+                className="h-[56px] border relative overflow-visible bg-background shadow-none"
                 style={[
                     borderStyle as any,
                     { borderRadius: 4 }
                 ]}
             >
-                <Animated.View style={[labelStyle as any, { position: 'absolute', left: 14, top: 20, zIndex: 0, pointerEvents: 'none' }]}>
-                    <Text className={cn("text-[17px] font-medium tracking-tight", isFocused ? "text-primary" : "text-muted-foreground/90")}>
+                <Animated.View style={[labelStyle as any, { position: 'absolute', left: 14, top: 18, zIndex: 0, pointerEvents: 'none' }]}>
+                    <Text className={cn("text-[13px] font-normal tracking-tight", !isFocused && "text-muted-foreground/90")} style={isFocused ? { color: '#1D9BF0' } : undefined}>
                         {label}
                     </Text>
                 </Animated.View>
@@ -105,7 +105,7 @@ export const AnimatedLabelInput = ({
                     onFocus={handleFocus as any}
                     onBlur={handleBlur as any}
                     className={cn(
-                        "text-[18px] h-full text-foreground px-[14px] font-medium pt-[18px] pb-0.5",
+                        "text-[16px] h-full text-foreground px-[14px] font-normal pt-[20px] pb-0.5",
                         className
                     )}
                     placeholder=""

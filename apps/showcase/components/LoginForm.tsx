@@ -75,7 +75,7 @@ export const LoginForm = React.memo(function LoginForm({ onLogin }: LoginFormPro
 
     return (
         <Animated.View style={formAnimatedStyle} className="w-full">
-            <View className="gap-4 mb-4">
+            <View className="gap-3 mb-5">
                 <Controller
                     control={control}
                     name="email"
@@ -112,16 +112,17 @@ export const LoginForm = React.memo(function LoginForm({ onLogin }: LoginFormPro
                 onPress={handleSubmit(onSubmit)}
                 disabled={authLoading}
                 className={cn(
-                    "h-14 rounded-full bg-primary active:scale-[0.97] border-0 shadow-lg shadow-blue-500/30 elevation-8",
+                    "h-[44px] rounded-full active:scale-[0.97] border-0",
                     authLoading && "opacity-80"
                 )}
+                style={{ backgroundColor: '#1D9BF0' }}
             >
                 {authLoading ? (
                     <ActivityIndicator color="white" />
                 ) : (
                     <View className="flex-row items-center gap-3">
-                        <Text className="text-white font-black text-[18px] tracking-tight">Enter Showcase</Text>
-                        <MaterialIcons name="arrow-forward" size={20} color="white" />
+                        <Text className="text-white font-bold text-[15px]">Enter Showcase</Text>
+                        <MaterialIcons name="arrow-forward" size={18} color="white" />
                     </View>
                 )}
             </Button>

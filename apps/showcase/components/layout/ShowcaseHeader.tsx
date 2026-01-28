@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { Icon } from '@/components/ui/Icon';
@@ -10,15 +10,23 @@ export function ShowcaseHeader() {
 
     return (
         <View
-            style={{ paddingTop: insets.top }}
-            className="bg-background/80 border-b border-border z-50 backdrop-blur-xl"
+            style={{ paddingTop: insets.top, backgroundColor: '#075E54' }}
+            className="z-50"
         >
-            <View className="max-w-2xl mx-auto w-full h-14 flex-row items-center justify-between px-6">
-                <View className="flex-row items-center gap-2">
-                    <View className="w-8 h-8 rounded-lg bg-primary items-center justify-center">
-                        <Icon as={MaterialIcons} name="dashboard" size={18} className="text-primary-foreground" />
-                    </View>
-                    <Text className="text-xl font-black tracking-tighter text-foreground">SHOWCASE</Text>
+            <View className="h-[56px] flex-row items-center justify-between px-4">
+                <Text className="text-[20px] font-bold text-white tracking-tight">
+                    Showcase
+                </Text>
+                <View className="flex-row items-center gap-1">
+                    <Pressable className="w-10 h-10 rounded-full items-center justify-center active:bg-white/10">
+                        <Icon as={MaterialIcons} name="camera-alt" size={22} className="text-white" />
+                    </Pressable>
+                    <Pressable className="w-10 h-10 rounded-full items-center justify-center active:bg-white/10">
+                        <Icon as={MaterialIcons} name="search" size={22} className="text-white" />
+                    </Pressable>
+                    <Pressable className="w-10 h-10 rounded-full items-center justify-center active:bg-white/10">
+                        <Icon as={MaterialIcons} name="more-vert" size={22} className="text-white" />
+                    </Pressable>
                 </View>
             </View>
         </View>

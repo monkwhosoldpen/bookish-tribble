@@ -12,24 +12,17 @@ export function SettingsHeader() {
   return (
     <View
       style={{ paddingTop: insets.top }}
-      className="bg-background/80 border-b border-border z-50 backdrop-blur-xl"
+      className="bg-background/95 border-b border-border/40 z-50 backdrop-blur-xl"
     >
-      <View className="max-w-2xl mx-auto w-full h-14 flex-row items-center justify-between px-6">
-        <View className="flex-row items-center gap-3">
-          <Pressable
-            onPress={() => router.replace('/')}
-            className="active:opacity-60 transition-opacity"
-          >
-            <View className="w-8 h-8 rounded-lg items-center justify-center">
-              <Icon as={MaterialIcons} name="arrow-back" size={20} className="text-foreground" />
-            </View>
-          </Pressable>
-          <View className="flex-row items-center gap-2">
-            <View className="w-8 h-8 rounded-lg bg-primary items-center justify-center">
-              <Icon as={MaterialIcons} name="settings" size={18} className="text-primary-foreground" />
-            </View>
-            <Text className="text-xl font-black tracking-tighter text-foreground">SETTINGS</Text>
-          </View>
+      <View className="max-w-2xl mx-auto w-full h-[53px] flex-row items-center px-4">
+        <Pressable
+          onPress={() => router.replace('/')}
+          className="w-9 h-9 rounded-full items-center justify-center active:bg-foreground/10 mr-6"
+        >
+          <Icon as={MaterialIcons} name="arrow-back" size={20} className="text-foreground" />
+        </Pressable>
+        <View>
+          <Text className="text-[20px] font-bold tracking-tight text-foreground">Settings</Text>
         </View>
       </View>
     </View>

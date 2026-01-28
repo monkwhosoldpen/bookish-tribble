@@ -21,7 +21,6 @@ export const BottomNav = React.memo(function BottomNav({ activeTab }: BottomNavP
     const handlePress = (tab: TabType) => {
         if (tab === activeTab) return;
 
-        // Add haptic feedback
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
 
         switch (tab) {
@@ -42,20 +41,20 @@ export const BottomNav = React.memo(function BottomNav({ activeTab }: BottomNavP
     return (
         <View
             style={{ paddingBottom: Math.max(insets.bottom, 2) }}
-            className="bg-background/95 backdrop-blur-sm border-t border-border/20"
+            className="bg-background border-t border-border/30"
         >
             <View className="max-w-2xl mx-auto w-full h-14 flex-row justify-around items-center px-2">
                 <NavIcon
                     icon={MaterialIcons}
-                    label="Home"
-                    iconName="home"
+                    label="Chats"
+                    iconName="chat"
                     active={activeTab === 'home'}
                     onPress={() => handlePress('home')}
                 />
                 <NavIcon
                     icon={MaterialIcons}
-                    label="Explore"
-                    iconName="explore"
+                    label="Updates"
+                    iconName="donut-large"
                     active={activeTab === 'explore'}
                     onPress={() => handlePress('explore')}
                 />
@@ -78,25 +77,22 @@ function NavIcon({ icon: Icon, label, active, onPress, iconName }: { icon: IconC
             accessibilityRole="tab"
             accessibilityLabel={label}
             accessibilityState={{ selected: active }}
-            className="items-center justify-center flex-1 h-full active:opacity-80 transition-all duration-200"
+            className="items-center justify-center flex-1 h-full active:opacity-80"
         >
             <View className={cn(
-                "w-9 h-9 items-center justify-center transition-all duration-200 mb-0.5",
-                active ? "scale-110" : "scale-100"
+                "w-16 h-8 items-center justify-center rounded-full mb-0.5",
+                active && "bg-[#25D366]/15"
             )}>
                 <Icon
                     name={iconName as any}
-                    size={20}
-                    className={cn(
-                        "transition-all duration-200",
-                        active ? "text-primary" : "text-muted-foreground"
-                    )}
+                    size={22}
+                    color={active ? '#075E54' : '#8696A0'}
                 />
             </View>
-            <Text className={cn(
-                "text-[10px] font-medium uppercase tracking-wide transition-all duration-200",
-                active ? "text-primary font-semibold" : "text-muted-foreground/70"
-            )}>
+            <Text
+                className="text-[11px] font-medium"
+                style={{ color: active ? '#075E54' : '#8696A0' }}
+            >
                 {label}
             </Text>
         </Pressable>
