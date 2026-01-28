@@ -5,6 +5,7 @@ import { ScreenWrapper } from '@/components/layout/ScreenWrapper';
 import * as React from 'react';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
+import { COLOR_TOKENS } from '@/lib/design-tokens';
 
 // Twitter/X Logo component
 function XLogo({ size = 24, color = 'currentColor', className }: { size?: number; color?: string; className?: string }) {
@@ -26,7 +27,7 @@ function AuthContent({ onLogin }: { onLogin: () => void }) {
                 entering={FadeInDown.delay(100).duration(800).springify()}
                 className="mb-8 md:mb-10"
             >
-                <XLogo size={32} color="#1D9BF0" />
+                <XLogo size={32} color={COLOR_TOKENS.primary} />
 
                 <Text className="text-[42px] md:text-[64px] font-black tracking-tighter leading-[1.1] text-foreground mt-10 mb-3">
                     Happening now
@@ -44,9 +45,9 @@ function AuthContent({ onLogin }: { onLogin: () => void }) {
             <Animated.View entering={FadeInDown.delay(600).duration(800).springify()} className="mt-8 max-w-[300px]">
                 <Text className="text-[12px] text-muted-foreground leading-4">
                     By signing up, you agree to the{' '}
-                    <Text className="text-[12px] text-[#1D9BF0]">Terms of Service</Text> and{' '}
-                    <Text className="text-[12px] text-[#1D9BF0]">Privacy Policy</Text>, including{' '}
-                    <Text className="text-[12px] text-[#1D9BF0]">Cookie Use</Text>.
+                    <Text className="text-[12px] text-primary">Terms of Service</Text> and{' '}
+                    <Text className="text-[12px] text-primary">Privacy Policy</Text>, including{' '}
+                    <Text className="text-[12px] text-primary">Cookie Use</Text>.
                 </Text>
             </Animated.View>
         </View>
@@ -87,7 +88,7 @@ function UnauthHomeMobile({ onLogin }: { onLogin: () => void }) {
 
             {/* Second screen - full height login section */}
             <View className="h-screen bg-background justify-center px-8">
-                <XLogo size={28} color="#1D9BF0" />
+                <XLogo size={28} color={COLOR_TOKENS.primary} />
 
                 <View className="mt-10 mb-8">
                     <Text className="text-[28px] font-black tracking-tighter leading-[1.15] text-foreground mb-2">
@@ -105,9 +106,9 @@ function UnauthHomeMobile({ onLogin }: { onLogin: () => void }) {
                 <View className="mt-8 max-w-[300px]">
                     <Text className="text-[12px] text-muted-foreground leading-4">
                         By signing up, you agree to the{' '}
-                        <Text className="text-[12px] text-[#1D9BF0]">Terms of Service</Text> and{' '}
-                        <Text className="text-[12px] text-[#1D9BF0]">Privacy Policy</Text>, including{' '}
-                        <Text className="text-[12px] text-[#1D9BF0]">Cookie Use</Text>.
+                        <Text className="text-[12px] text-primary">Terms of Service</Text> and{' '}
+                        <Text className="text-[12px] text-primary">Privacy Policy</Text>, including{' '}
+                        <Text className="text-[12px] text-primary">Cookie Use</Text>.
                     </Text>
                 </View>
             </View>

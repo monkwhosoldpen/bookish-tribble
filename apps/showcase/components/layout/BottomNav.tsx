@@ -6,6 +6,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { useColorScheme } from 'nativewind';
+import { COLOR_TOKENS } from '@/lib/design-tokens';
 
 export type TabType = 'home' | 'explore' | 'settings';
 
@@ -71,6 +73,9 @@ export const BottomNav = React.memo(function BottomNav({ activeTab }: BottomNavP
 });
 
 function NavIcon({ icon: Icon, label, active, onPress, iconName }: { icon: IconComponent, label: string, active: boolean, onPress: () => void, iconName: string }) {
+    const { colorScheme } = useColorScheme();
+    const mutedColor = colorScheme === 'dark' ? COLOR_TOKENS.dark.muted : COLOR_TOKENS.light.muted;
+
     return (
         <Pressable
             onPress={onPress}
@@ -81,17 +86,17 @@ function NavIcon({ icon: Icon, label, active, onPress, iconName }: { icon: IconC
         >
             <View className={cn(
                 "w-16 h-8 items-center justify-center rounded-full mb-0.5",
-                active && "bg-[#25D366]/15"
+                active && "bg-primary/10"
             )}>
                 <Icon
                     name={iconName as any}
                     size={22}
-                    color={active ? '#075E54' : '#8696A0'}
+                    color={active ? COLOR_TOKENS.primary : mutedColor}
                 />
             </View>
             <Text
                 className="text-[11px] font-medium"
-                style={{ color: active ? '#075E54' : '#8696A0' }}
+                style={{ color: active ? COLOR_TOKENS.primary : mutedColor }}
             >
                 {label}
             </Text>

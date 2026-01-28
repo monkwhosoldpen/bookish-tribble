@@ -11,7 +11,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { cn } from '@/registry/nativewind/lib/utils';
 import { Text } from '@/registry/nativewind/components/ui/text';
-import { TRANSITIONS } from '@/lib/design-tokens';
+import { TRANSITIONS, COLOR_TOKENS } from '@/lib/design-tokens';
+import { useColorScheme } from 'nativewind';
 
 interface AnimatedLabelInputProps extends Omit<TextInputProps, 'onFocus' | 'onBlur'> {
     label: string;
@@ -43,6 +44,8 @@ export const AnimatedLabelInput = ({
 }: AnimatedLabelInputProps) => {
     const [isFocused, setIsFocused] = useState(false);
     const hasValue = !!(value && value.length > 0);
+    const { colorScheme } = useColorScheme();
+    const borderColor = colorScheme === 'dark' ? COLOR_TOKENS.dark.border : COLOR_TOKENS.light.border;
 
     // Animation Values
     const focusAnim = useSharedValue(0);
@@ -76,7 +79,7 @@ export const AnimatedLabelInput = ({
             borderColor: interpolateColor(
                 focusAnim.value,
                 [0, 1],
-                ['#CFD9DE', '#1D9BF0']
+                [borderColor, COLOR_TOKENS.primary]
             ),
             backgroundColor: 'transparent',
             borderWidth: interpolate(focusAnim.value, [0, 1], [1, 2]),
@@ -93,7 +96,7 @@ export const AnimatedLabelInput = ({
                 ]}
             >
                 <Animated.View style={[labelStyle as any, { position: 'absolute', left: 14, top: 18, zIndex: 0, pointerEvents: 'none' }]}>
-                    <Text className={cn("text-[13px] font-normal tracking-tight", !isFocused && "text-muted-foreground/90")} style={isFocused ? { color: '#1D9BF0' } : undefined}>
+                    <Text className={cn("text-[13px] font-normal tracking-tight", !isFocused && "text-muted-foreground/90")} style={isFocused ? { color: COLOR_TOKENS.primary } : undefined}>
                         {label}
                     </Text>
                 </Animated.View>

@@ -11,6 +11,7 @@ import { useHaptics } from '@/contexts/HapticsContext';
 import { NotificationSectionWeb } from '@/components/notifications/NotificationSectionWeb';
 import { NotificationSectionNative } from '@/components/notifications/NotificationSectionNative';
 import { Platform } from 'react-native';
+import { COLOR_TOKENS } from '@/lib/design-tokens';
 
 interface SettingsContentProps {
   isMobile: boolean;
@@ -372,7 +373,7 @@ function SidebarItem({
       )}
     >
       {isLoading ? (
-        <ActivityIndicator size="small" color="#ef4444" />
+        <ActivityIndicator size="small" color={COLOR_TOKENS.destructive} />
       ) : (
         <Icon
           as={MaterialIcons}
@@ -404,6 +405,9 @@ function SettingsSwitchRow({
   value: boolean;
   onValueChange: (value: boolean) => void;
 }) {
+  const { colorScheme } = useColorScheme();
+  const borderColor = colorScheme === 'dark' ? COLOR_TOKENS.dark.border : COLOR_TOKENS.light.border;
+
   return (
     <View className="flex-row items-center px-4 py-3 border-b border-border/20">
       <Icon as={MaterialIcons} name={icon as any} size={20} className="text-muted-foreground mr-3" />
@@ -414,9 +418,9 @@ function SettingsSwitchRow({
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: '#CFD9DE', true: '#1D9BF0' }}
+        trackColor={{ false: borderColor, true: COLOR_TOKENS.primary }}
         thumbColor={'#fff'}
-        ios_backgroundColor="#CFD9DE"
+        ios_backgroundColor={borderColor}
       />
     </View>
   );

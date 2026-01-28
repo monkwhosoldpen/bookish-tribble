@@ -44,3 +44,23 @@ export const TRANSITIONS = {
     spring: { damping: 20, stiffness: 100 },
     stagger: 20,
 };
+
+export const COLOR_TOKENS = {
+    primary: '#1D9BF0',
+    destructive: '#F4212E',
+    success: '#00BA7C',
+    light: {
+        background: '#FFFFFF',
+        foreground: '#0F1419',
+        secondary: '#EFF3F4',
+        muted: '#536471',
+        border: '#EFF3F4',
+    },
+    dark: {
+        background: '#000000',
+        foreground: '#FFFFFF',
+        secondary: '#16181C',
+        muted: '#71767B',
+        border: '#2F3336',
+    },
+};

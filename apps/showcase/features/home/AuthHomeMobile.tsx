@@ -10,6 +10,8 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Icon } from '@/components/ui/Icon';
 import { useHomeFeed, ChatTab, ChatItem } from '@/hooks/useHomeFeed';
 import { useRouter } from 'expo-router';
+import { useColorScheme } from 'nativewind';
+import { COLOR_TOKENS } from '@/lib/design-tokens';
 
 export const AuthHomeMobile = function AuthHomeMobile() {
     const {
@@ -23,6 +25,8 @@ export const AuthHomeMobile = function AuthHomeMobile() {
         handleExplore
     } = useHomeFeed();
     const router = useRouter();
+    const { colorScheme } = useColorScheme();
+    const mutedColor = colorScheme === 'dark' ? COLOR_TOKENS.dark.muted : COLOR_TOKENS.light.muted;
 
     const { showError, showSuccess } = useToast();
 
@@ -83,7 +87,7 @@ export const AuthHomeMobile = function AuthHomeMobile() {
                 className="flex-row items-center py-3 px-4 active:bg-foreground/5"
             >
                 {/* Avatar */}
-                <View className="h-12 w-12 rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#25D366' }}>
+                <View className="h-12 w-12 rounded-full items-center justify-center mr-3 bg-primary">
                     <Text className="text-white font-bold text-lg">
                         {item.username.charAt(0).toUpperCase()}
                     </Text>
@@ -94,20 +98,20 @@ export const AuthHomeMobile = function AuthHomeMobile() {
                         <Text className="text-[16.5px] font-normal text-foreground">{item.username}</Text>
                         <Text
                             className="text-[12px]"
-                            style={{ color: item.unreadCount ? '#25D366' : '#8696A0' }}
+                            style={{ color: item.unreadCount ? COLOR_TOKENS.primary : mutedColor }}
                         >
                             {item.timestamp}
                         </Text>
                     </View>
                     <View className="flex-row items-center justify-between mt-1">
                         <View className="flex-row items-center flex-1 mr-4">
-                            <Icon as={MaterialIcons} name="done-all" size={16} color="#53BDEB" style={{ marginRight: 3 }} />
+                            <Icon as={MaterialIcons} name="done-all" size={16} color={COLOR_TOKENS.primary} style={{ marginRight: 3 }} />
                             <Text className="text-[14px] text-muted-foreground flex-1" numberOfLines={1}>
                                 {item.lastMessage}
                             </Text>
                         </View>
                         {item.unreadCount ? (
-                            <View className="min-w-[20px] h-5 rounded-full items-center justify-center px-1.5" style={{ backgroundColor: '#25D366' }}>
+                            <View className="min-w-[20px] h-5 rounded-full items-center justify-center px-1.5 bg-primary">
                                 <Text className="text-white text-xs font-bold">
                                     {item.unreadCount}
                                 </Text>
@@ -121,8 +125,8 @@ export const AuthHomeMobile = function AuthHomeMobile() {
 
     return (
         <View className="flex-1 bg-background">
-            {/* WhatsApp-style top tabs on teal bar */}
-            <View style={{ backgroundColor: '#075E54' }}>
+            {/* Twitter-style top tabs */}
+            <View className="bg-background border-b border-border">
                 <View className="flex-row">
                     {(['following', 'invites', 'favourites'] as ChatTab[]).map((tab) => (
                         <Pressable
@@ -134,13 +138,13 @@ export const AuthHomeMobile = function AuthHomeMobile() {
                                 <Text
                                     className={cn(
                                         'text-[13px] font-bold uppercase tracking-wide',
-                                        activeTab === tab ? 'text-white' : 'text-white/60'
+                                        activeTab === tab ? 'text-foreground' : 'text-muted-foreground'
                                     )}
                                 >
                                     {tab}
                                 </Text>
                                 {counts[tab] > 0 && (
-                                    <View className="min-w-[16px] h-4 rounded-full items-center justify-center px-1" style={{ backgroundColor: '#25D366' }}>
+                                    <View className="min-w-[16px] h-4 rounded-full items-center justify-center px-1 bg-primary">
                                         <Text className="text-white text-[10px] font-bold">
                                             {counts[tab] > 99 ? '99+' : counts[tab]}
                                         </Text>
@@ -148,7 +152,7 @@ export const AuthHomeMobile = function AuthHomeMobile() {
                                 )}
                             </View>
                             {activeTab === tab && (
-                                <View className="absolute bottom-0 left-4 right-4 h-[3px] rounded-full" style={{ backgroundColor: '#25D366' }} />
+                                <View className="absolute bottom-0 left-4 right-4 h-[3px] rounded-full bg-primary" />
                             )}
                         </Pressable>
                     ))}
@@ -172,18 +176,17 @@ export const AuthHomeMobile = function AuthHomeMobile() {
                                 refreshing={refreshing}
                                 onRefresh={onRefresh}
                                 tintColor={refreshing ? undefined : 'transparent'}
-                                colors={['#25D366']}
+                                colors={[COLOR_TOKENS.primary]}
                             />
                         }
                     />
                 )}
             </View>
 
-            {/* WhatsApp FAB */}
+            {/* Twitter-style FAB */}
             <Pressable
                 onPress={handleExplore}
-                className="absolute bottom-6 right-4 w-[56px] h-[56px] rounded-2xl items-center justify-center active:scale-95"
-                style={{ backgroundColor: '#25D366' }}
+                className="absolute bottom-6 right-4 w-[56px] h-[56px] rounded-2xl items-center justify-center active:scale-95 bg-primary"
             >
                 <Icon as={MaterialIcons} name="chat" size={24} className="text-white" />
             </Pressable>

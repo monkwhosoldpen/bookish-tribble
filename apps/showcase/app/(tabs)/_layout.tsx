@@ -1,5 +1,6 @@
 import { Stack } from 'expo-router';
 import { useColorScheme } from 'nativewind';
+import { COLOR_TOKENS } from '@/lib/design-tokens';
 
 export default function TabLayout() {
   const { colorScheme } = useColorScheme();
@@ -9,7 +10,7 @@ export default function TabLayout() {
       screenOptions={{
         headerShown: false,
         contentStyle: {
-          backgroundColor: colorScheme === 'dark' ? '#09090b' : '#ffffff',
+          backgroundColor: colorScheme === 'dark' ? COLOR_TOKENS.dark.background : COLOR_TOKENS.light.background,
         },
       }}
     >

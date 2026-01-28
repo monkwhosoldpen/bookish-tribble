@@ -26,13 +26,16 @@ export const useNotificationEngine = (): NotificationEngine => {
     }, []);
 
     const setupForegroundListener = useCallback((callback: (message: NotificationMessage) => void) => {
-        let unsubscribePromise = NotificationsEngineWeb.onMessage(callback);
+        const unsubscribePromise = NotificationsEngineWeb.onMessage(callback);
 
         let unsubscribed = false;
         let unsubscribeFn: (() => void) | undefined;
 
         unsubscribePromise.then(unsub => {
-            if (!unsubscribed) {
+            if (unsubscribed) {
+                // Cleanup was called before the promise resolved — unsubscribe immediately
+                unsub();
+            } else {
                 unsubscribeFn = unsub;
             }
         });

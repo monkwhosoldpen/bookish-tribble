@@ -112,10 +112,9 @@ export const LoginForm = React.memo(function LoginForm({ onLogin }: LoginFormPro
                 onPress={handleSubmit(onSubmit)}
                 disabled={authLoading}
                 className={cn(
-                    "h-[44px] rounded-full active:scale-[0.97] border-0",
+                    "h-[44px] rounded-full active:scale-[0.97] border-0 bg-primary",
                     authLoading && "opacity-80"
                 )}
-                style={{ backgroundColor: '#1D9BF0' }}
             >
                 {authLoading ? (
                     <ActivityIndicator color="white" />

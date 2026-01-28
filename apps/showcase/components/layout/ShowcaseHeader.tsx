@@ -10,22 +10,22 @@ export function ShowcaseHeader() {
 
     return (
         <View
-            style={{ paddingTop: insets.top, backgroundColor: '#075E54' }}
-            className="z-50"
+            style={{ paddingTop: insets.top }}
+            className="z-50 bg-background border-b border-border"
         >
             <View className="h-[56px] flex-row items-center justify-between px-4">
-                <Text className="text-[20px] font-bold text-white tracking-tight">
+                <Text className="text-[20px] font-bold text-foreground tracking-tight">
                     Showcase
                 </Text>
                 <View className="flex-row items-center gap-1">
-                    <Pressable className="w-10 h-10 rounded-full items-center justify-center active:bg-white/10">
-                        <Icon as={MaterialIcons} name="camera-alt" size={22} className="text-white" />
+                    <Pressable className="w-10 h-10 rounded-full items-center justify-center active:bg-foreground/10">
+                        <Icon as={MaterialIcons} name="camera-alt" size={22} className="text-foreground" />
                     </Pressable>
-                    <Pressable className="w-10 h-10 rounded-full items-center justify-center active:bg-white/10">
-                        <Icon as={MaterialIcons} name="search" size={22} className="text-white" />
+                    <Pressable className="w-10 h-10 rounded-full items-center justify-center active:bg-foreground/10">
+                        <Icon as={MaterialIcons} name="search" size={22} className="text-foreground" />
                     </Pressable>
-                    <Pressable className="w-10 h-10 rounded-full items-center justify-center active:bg-white/10">
-                        <Icon as={MaterialIcons} name="more-vert" size={22} className="text-white" />
+                    <Pressable className="w-10 h-10 rounded-full items-center justify-center active:bg-foreground/10">
+                        <Icon as={MaterialIcons} name="more-vert" size={22} className="text-foreground" />
                     </Pressable>
                 </View>
             </View>
