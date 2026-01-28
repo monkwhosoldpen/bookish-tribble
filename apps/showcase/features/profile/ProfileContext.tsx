@@ -33,20 +33,12 @@ export function ProfileProvider({ username, profileData, children }: ProfileProv
     const [selectedIndex, setSelectedIndex] = useState(0);
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    const sidebarChannels = useMemo<SidebarChannel[]>(() => {
-        const base: SidebarChannel[] = [
-            { id: 'main', name: 'Main Channel', type: 'main' }
-        ];
-
-        // Add mock channels based on entity data or defaults
-        const sources: SidebarChannel[] = [
-            { id: 'broadcast', name: 'Broadcast', type: 'broadcast', unread_count: 5 },
-            { id: 'public', name: 'Public Room', type: 'public' },
-            { id: 'twitter', name: 'Twitter', type: 'social' },
-        ];
-
-        return [...base, ...sources];
-    }, []);
+    const [sidebarChannels] = React.useState<SidebarChannel[]>([
+        { id: 'main', name: 'Main Channel', type: 'main' },
+        { id: 'social', name: 'Social', type: 'social', unread_count: 3 },
+        { id: 'announcements', name: 'Announcements', type: 'broadcast' },
+        { id: 'ai-assistant', name: 'AI Assistant', type: 'ai_agent' },
+    ]);
 
     const handleChannelSelect = useCallback((index: number) => {
         setSelectedIndex(index);

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useDevices } from './useDevicesContext';
 import { sampleChats } from '../lib/sample-data';
-import * as Haptics from 'expo-haptics';
+import { useHaptics } from '@/contexts/HapticsContext';
 import { router } from 'expo-router';
 
 export type ChatTab = 'following' | 'invites' | 'favourites';
@@ -15,6 +15,7 @@ export interface ChatItem {
 
 export function useHomeFeed() {
     const { followedChannels, favouriteChannels, loading: devicesLoading, refetch } = useDevices();
+    const { impact } = useHaptics();
     const [activeTab, setActiveTab] = React.useState<ChatTab>('following');
     const [refreshing, setRefreshing] = React.useState(false);
     const [isInitializing, setIsInitializing] = React.useState(true);
@@ -28,20 +29,20 @@ export function useHomeFeed() {
 
     const onRefresh = React.useCallback(async () => {
         setRefreshing(true);
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
+        impact();
         await refetch?.();
         setRefreshing(false);
-    }, [refetch]);
+    }, [refetch, impact]);
 
     const handleTabChange = React.useCallback((tab: ChatTab) => {
         setActiveTab(tab);
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
-    }, []);
+        impact();
+    }, [impact]);
 
     const handleExplore = React.useCallback(() => {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => { });
+        impact('medium' as any);
         router.push('/explore');
-    }, []);
+    }, [impact]);
 
     const counts = React.useMemo(() => ({
         following: (followedChannels || []).length || (isInitializing ? 0 : sampleChats.slice(0, 3).length),

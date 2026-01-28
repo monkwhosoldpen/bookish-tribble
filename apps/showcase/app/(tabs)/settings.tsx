@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { router } from 'expo-router';
 import { ScreenWrapper } from '@/components/layout/ScreenWrapper';
 import { BottomNav } from '@/components/layout/BottomNav';
 import { SettingsHeader } from '@/components/settings/SettingsHeader';
 import { useAuth } from '@/contexts/AuthContext';
-import * as Haptics from 'expo-haptics';
 import { SettingsContent } from '@showcase/components/settings/SettingsContent';
 
 export default function SettingsPage() {
@@ -11,14 +11,18 @@ export default function SettingsPage() {
   const [isSigningOut, setIsSigningOut] = React.useState(false);
 
   const handleSignOut = async () => {
+    console.log('SettingsPage: handleSignOut called');
     setIsSigningOut(true);
     try {
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      console.log('SettingsPage: calling signOut()');
       await signOut();
+      console.log('SettingsPage: signOut() completed, redirecting');
+      // Redirect to login after successful logout
+      router.replace('/');
     } catch (error) {
-      console.error('Sign out failed:', error);
-      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      console.error('SettingsPage: Sign out failed:', error);
     } finally {
+      console.log('SettingsPage: setting isSigningOut to false');
       setIsSigningOut(false);
     }
   };

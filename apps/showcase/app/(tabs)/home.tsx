@@ -25,20 +25,17 @@ export default function HomePage() {
   }
 
   return (
-    <ScreenWrapper
-      header={<ShowcaseHeader />}
-      bottomNav={<BottomNav activeTab="home" />}
-      mobileContent={
-        isAuthenticated ? 
-          <AuthHome /> : 
-          <UnauthHome onLogin={handleLogin} />
+    <>
+      {isAuthenticated ? 
+        <AuthHome /> : 
+        <ScreenWrapper
+          header={<ShowcaseHeader />}
+          bottomNav={<BottomNav activeTab="home" />}
+          mobileContent={<UnauthHome onLogin={handleLogin} />}
+          desktopContent={<UnauthHome onLogin={handleLogin} />}
+          fullWidth={false}
+        />
       }
-      desktopContent={
-        isAuthenticated ? 
-          <AuthHome /> : 
-          <UnauthHome onLogin={handleLogin} />
-      }
-      fullWidth={false}
-    />
+    </>
   );
 }

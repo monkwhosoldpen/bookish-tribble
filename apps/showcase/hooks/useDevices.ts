@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useFirebaseMessaging } from './useFirebaseMessaging';
 import { CENTRAL_API_URL } from '@/lib/env';
 import { persistentStorage } from '@/lib/storage';
-import * as Haptics from 'expo-haptics';
+import { useHaptics } from '@/contexts/HapticsContext';
 
 export interface Device {
     id: string;
@@ -29,22 +29,16 @@ const CACHE_KEYS = {
 };
 
 export function useDevices() {
-    const { user, session } = useAuth();
-    const { token: currentToken } = useFirebaseMessaging();
+    const { session, user } = useAuth();
+    const firebaseMessaging = useFirebaseMessaging();
+    const { impact, success, error: hapticError } = useHaptics();
 
-    const [devices, setDevices] = useState<Device[]>(() =>
-        persistentStorage.get<Device[]>(CACHE_KEYS.DEVICES) || []
-    );
-    const [followedChannels, setFollowedChannels] = useState<FollowedChannel[]>(() =>
-        persistentStorage.get<FollowedChannel[]>(CACHE_KEYS.FOLLOWED) || []
-    );
-    const [favouriteChannels, setFavouriteChannels] = useState<FavouriteChannel[]>(() =>
-        persistentStorage.get<FavouriteChannel[]>(CACHE_KEYS.FAVOURITES) || []
-    );
-
-    const [loading, setLoading] = useState(false);
+    const [devices, setDevices] = useState<Device[]>([]);
+    const [followedChannels, setFollowedChannels] = useState<FollowedChannel[]>([]);
+    const [favouriteChannels, setFavouriteChannels] = useState<FavouriteChannel[]>([]);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-
+    const [currentToken, setCurrentToken] = useState<string | null>(null);
     const abortControllerRef = useRef<AbortController | null>(null);
     const pollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -97,14 +91,14 @@ export function useDevices() {
             persistentStorage.set(CACHE_KEYS.FAVOURITES, favouriteChannelsList);
 
             if (!silent) {
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => { });
+                success();
             }
         } catch (err: unknown) {
             if (err instanceof Error && err.name === 'AbortError') return;
             const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
             setError(errorMessage);
             if (!silent) {
-                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => { });
+                hapticError();
             }
         } finally {
             if (!controller.signal.aborted) {
@@ -148,7 +142,7 @@ export function useDevices() {
 
         const previousDevices = devices;
         setDevices(prev => prev.filter(d => d.fcm_token !== fcmToken));
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => { });
+        impact('medium' as any);
 
         try {
             const res = await fetch(`${CENTRAL_API_URL}/api/central/sync/device`, {
@@ -164,7 +158,7 @@ export function useDevices() {
             persistentStorage.set(CACHE_KEYS.DEVICES, devices.filter(d => d.fcm_token !== fcmToken));
         } catch (err) {
             setDevices(previousDevices);
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error).catch(() => { });
+            hapticError();
         }
     }, [session?.access_token, devices]);
 

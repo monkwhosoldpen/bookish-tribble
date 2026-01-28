@@ -9,7 +9,7 @@ import {
 } from 'react';
 import { Platform } from 'react-native';
 import { useAuth } from './AuthContext';
-import { useFirebaseMessaging } from '@/hooks/useFirebaseMessaging';
+import { useNotificationEngine } from '@/hooks/useNotificationEngine';
 import { supabase } from '@/lib/supabase';
 import { CENTRAL_API_URL } from '@/lib/env';
 import { PREFERENCE_KEYS } from '@/features/settings/constants';
@@ -51,7 +51,7 @@ const NotificationContext = createContext<NotificationState | undefined>(undefin
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const { user, loading: authLoading } = useAuth();
-  const firebaseMessaging = useFirebaseMessaging();
+  const engine = useNotificationEngine();
   const [enabled, setEnabled] = useState(false);
   const [pushToken, setPushToken] = useState<string | null>(null);
   const [isRegistering, setIsRegistering] = useState(false);
@@ -67,63 +67,50 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
     setIsRegistering(true);
     try {
-      let pushToken: string | null = null;
-
-      if (isWeb) {
-        // Web: Use Firebase JS SDK approach
-        // For now, we'll use a simplified approach
-        if (typeof window !== 'undefined' && 'Notification' in window) {
-          const permission = await Notification.requestPermission();
-          if (permission !== 'granted') {
-            setIsRegistering(false);
-            return null;
-          }
-        }
-      } else {
-        // Native: Use Firebase Cloud Messaging
-        const hasPermission = await firebaseMessaging.requestPermission();
-        if (!hasPermission) {
-          setIsRegistering(false);
-          return null;
-        }
-
-        pushToken = await firebaseMessaging.getToken();
-        if (!pushToken) {
-          if (__DEV__) { console.error('[NOTIFS] Native: Failed to get FCM token'); }
-          setIsRegistering(false);
-          return null;
-        }
+      const hasPermission = await engine.requestPermission();
+      if (!hasPermission) {
+        setIsRegistering(false);
+        return null;
       }
 
-      setPushToken(pushToken);
+      const token = await engine.getToken();
+      if (!token) {
+        if (__DEV__) { console.error('[NOTIFS] Failed to get push token'); }
+        setIsRegistering(false);
+        return null;
+      }
+
+      setPushToken(token);
       setEnabled(true);
       setIsRegistering(false);
 
-      return { pushToken, synced: true };
+      // Sync token with API
+      if (isWeb) {
+        try {
+          await (engine as any).syncToken?.(token);
+        } catch (syncError) {
+          if (__DEV__) { console.warn('[NOTIFS] Token sync failed:', syncError); }
+        }
+      }
+
+      return { pushToken: token, synced: true };
     } catch (error) {
       if (__DEV__) { console.error('[NOTIFS] Enable failed:', error); }
       setIsRegistering(false);
       return null;
     }
-  }, [isRegistering, firebaseMessaging, isWeb]);
+  }, [isRegistering, engine, isWeb]);
 
   // Disable notifications
   const disable = useCallback(async () => {
     try {
-      if (isWeb) {
-        // Web: Just update state
-        setPushToken(null);
-        setEnabled(false);
-      } else {
-        // Native: Disable Firebase
-        await firebaseMessaging.disable();
-        setPushToken(null);
-        setEnabled(false);
-      }
+      await engine.disable();
+      setPushToken(null);
+      setEnabled(false);
     } catch (error) {
       if (__DEV__) { console.error('[NOTIFS] Disable failed:', error); }
     }
-  }, [firebaseMessaging, isWeb]);
+  }, [engine]);
 
   /**
    * Update User Preference - Local State Only
@@ -148,11 +135,30 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    // Update local state only (no API call)
+    // Update local state
     setPreferences((prev: any) => prev ? { ...prev, [key]: value } : null);
-    
-    if (__DEV__) {
-      console.log(`[NOTIFS-PREFS] Updated preference ${key} to ${value} (local only)`);
+
+    // Sync with API
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const accessToken = session?.access_token;
+      if (!accessToken) throw new Error('No access token');
+
+      const res = await fetch(`${CENTRAL_API_URL}/api/central/sync/preferences`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ [key]: value }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data.preferences) setPreferences(data.preferences);
+      }
+    } catch (err) {
+      if (__DEV__) { console.error('[NOTIFS-PREFS] Failed to update preference:', err); }
     }
   }, [user, enabled, pushToken, enable]);
 
@@ -166,17 +172,11 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       console.log('[NOTIFS] Checking notification status...');
       try {
         // Check notification status
-        if (isWeb) {
-          if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
-            setEnabled(true);
-          }
-        } else {
-          const currentToken = await firebaseMessaging.getToken();
-          if (mounted && currentToken) {
-            console.log('[NOTIFS] Native: Token retrieved:', currentToken.substring(0, 20) + '...');
-            setPushToken(currentToken);
-            setEnabled(true);
-          }
+        const currentToken = await engine.getToken();
+        if (mounted && currentToken) {
+          console.log('[NOTIFS] Token retrieved:', currentToken.substring(0, 20) + '...');
+          setPushToken(currentToken);
+          setEnabled(true);
         }
 
         if (mounted) {
@@ -189,31 +189,29 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
 
     checkStatus();
     return () => { mounted = false; };
-  }, [user, authLoading, isWeb, firebaseMessaging]);
+  }, [user, authLoading, engine]);
+
+  // Initialize Engine & Listeners
+  useEffect(() => {
+    if (Platform.OS === 'web') {
+      engine.registerServiceWorker();
+    } else {
+      engine.setupBackgroundMessageHandler();
+    }
+  }, [engine]);
 
   // Foreground Listener
   useEffect(() => {
     if (!user || authLoading) return;
 
-    let mounted = true;
     let unsubscribe: (() => void) | undefined;
 
     const setupListener = async () => {
       try {
-        if (isWeb) {
-          // Web: Use Firebase JS SDK listener
-          // Simplified for now - would need Firebase JS SDK setup
-          console.log('[NOTIFS] Web listener setup (simplified)');
-        } else {
-          // Native: Use Firebase RN listener
-          unsubscribe = firebaseMessaging.setupForegroundListener((message: any) => {
-            if (mounted) {
-              // Show toast notification
-              console.log('[NOTIFS] Foreground message:', message);
-              haptics.success();
-            }
-          });
-        }
+        unsubscribe = engine.setupForegroundListener((message: any) => {
+          console.log('[NOTIFS] Foreground message:', message);
+          haptics.success();
+        });
       } catch (error) {
         if (__DEV__) { console.error('[NOTIFS] Failed to setup foreground listener:', error); }
       }
@@ -222,10 +220,9 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     setupListener();
 
     return () => {
-      mounted = false;
       unsubscribe?.();
     };
-  }, [user, authLoading, firebaseMessaging, isWeb]);
+  }, [user, authLoading, engine]);
 
   // Note: Removed preferences fetch - using local state only
 

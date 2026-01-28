@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, ScrollView, Switch, ActivityIndicator } from 'react-native';
+import { View, ScrollView, Switch, ActivityIndicator, Pressable } from 'react-native';
 import { Text } from '@/registry/nativewind/components/ui/text';
 import { cn } from '@/registry/nativewind/lib/utils';
 import { useColorScheme } from 'nativewind';
@@ -7,6 +7,10 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Icon } from '@/components/ui/Icon';
 import { useNotifications } from '@/hooks/useNotifications';
 import { PREFERENCE_KEYS } from '@/features/settings/constants';
+import { useHaptics } from '@/contexts/HapticsContext';
+import { NotificationSectionWeb } from '@/components/notifications/NotificationSectionWeb';
+import { NotificationSectionNative } from '@/components/notifications/NotificationSectionNative';
+import { Platform } from 'react-native';
 
 interface SettingsContentProps {
   isMobile: boolean;
@@ -17,19 +21,22 @@ interface SettingsContentProps {
 export function SettingsContent({ isMobile, onSignOut, isSigningOut }: SettingsContentProps) {
   const { colorScheme, setColorScheme } = useColorScheme();
   const { preferences, updatePreference, enabled, isRegistering } = useNotifications();
+  const { enabled: hapticsEnabled, setEnabled: setHapticsEnabled, success, error } = useHaptics();
   const [autoSyncEnabled, setAutoSyncEnabled] = React.useState(true);
-  const [hapticFeedbackEnabled, setHapticFeedbackEnabled] = React.useState(true);
 
   const handleNotificationToggle = (value: boolean) => {
     updatePreference(PREFERENCE_KEYS.GLOBAL, value);
   };
+
+  // Render platform-specific notification section
+  const NotificationSection = Platform.OS === 'web' ? NotificationSectionWeb : NotificationSectionNative;
 
   const handleAutoSyncToggle = (value: boolean) => {
     setAutoSyncEnabled(value);
   };
 
   const handleHapticToggle = (value: boolean) => {
-    setHapticFeedbackEnabled(value);
+    setHapticsEnabled(value);
   };
 
   const handleThemeToggle = (value: boolean) => {
@@ -37,7 +44,15 @@ export function SettingsContent({ isMobile, onSignOut, isSigningOut }: SettingsC
   };
 
   const handleSignOut = async () => {
-    await onSignOut();
+    console.log('SettingsContent: handleSignOut called');
+    try {
+      await onSignOut();
+      console.log('SettingsContent: onSignOut completed successfully');
+      success();
+    } catch (err) {
+      console.log('SettingsContent: onSignOut failed', err);
+      error();
+    }
   };
 
   const containerClasses = cn(
@@ -69,15 +84,7 @@ export function SettingsContent({ isMobile, onSignOut, isSigningOut }: SettingsC
           
           {/* Notifications Setting */}
           <View className={itemWidthClasses}>
-            <SettingsCard>
-              <SettingsSwitchRow
-                icon="notifications"
-                label="Notifications"
-                description={preferences?.[PREFERENCE_KEYS.GLOBAL] ? "Push notifications enabled" : "Push notifications disabled"}
-                value={preferences?.[PREFERENCE_KEYS.GLOBAL] ?? false}
-                onValueChange={handleNotificationToggle}
-              />
-            </SettingsCard>
+            <NotificationSection />
           </View>
 
           {/* Auto Sync Setting */}
@@ -112,8 +119,8 @@ export function SettingsContent({ isMobile, onSignOut, isSigningOut }: SettingsC
               <SettingsSwitchRow
                 icon="vibration"
                 label="Haptic Feedback"
-                description={hapticFeedbackEnabled ? "Touch feedback enabled" : "Touch feedback disabled"}
-                value={hapticFeedbackEnabled}
+                description={hapticsEnabled ? "Touch feedback enabled" : "Touch feedback disabled"}
+                value={hapticsEnabled}
                 onValueChange={handleHapticToggle}
               />
             </SettingsCard>
@@ -236,7 +243,14 @@ function SettingsActionRow({
   isDestructive?: boolean;
 }) {
   return (
-    <View className="flex-row items-center gap-4 p-4">
+    <Pressable 
+      onPress={onPress}
+      disabled={isLoading}
+      className={cn(
+        "flex-row items-center gap-4 p-4 active:opacity-70 transition-opacity",
+        isDestructive && "active:bg-red-500/5"
+      )}
+    >
       <View className={cn(
         "w-10 h-10 rounded-xl items-center justify-center",
         isDestructive ? "bg-red-500/10" : "bg-primary/10"
@@ -268,6 +282,6 @@ function SettingsActionRow({
           isDestructive && "text-red-300"
         )} 
       />
-    </View>
+    </Pressable>
   );
 }

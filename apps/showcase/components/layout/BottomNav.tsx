@@ -7,7 +7,7 @@ import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-export type TabType = 'home' | 'settings';
+export type TabType = 'home' | 'explore' | 'settings';
 
 type IconComponent = typeof MaterialIcons;
 
