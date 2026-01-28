@@ -40,7 +40,7 @@ export function useHomeFeed() {
     }, [impact]);
 
     const handleExplore = React.useCallback(() => {
-        impact('medium' as any);
+        impact();
         router.push('/explore');
     }, [impact]);
 

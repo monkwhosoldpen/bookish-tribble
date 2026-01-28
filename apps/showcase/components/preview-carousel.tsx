@@ -5,15 +5,13 @@ import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react-native';
 import * as React from 'react';
 import { useState } from 'react';
 import {
-  Dimensions,
   FlatList,
   ListRenderItemInfo,
   NativeScrollEvent,
   NativeSyntheticEvent,
   View,
+  useWindowDimensions,
 } from 'react-native';
-
-const windowWidth = Dimensions.get('window').width;
 
 type PreviewCarouselProps = {
   previews: { name: string; component: (props: unknown) => React.JSX.Element }[];
@@ -23,6 +21,7 @@ type PreviewCarouselProps = {
 function PreviewCarousel({ previews, removeBottomSafeArea = false }: PreviewCarouselProps) {
   const [index, setIndex] = useState(0);
   const ref = React.useRef<FlatList>(null);
+  const { width: windowWidth } = useWindowDimensions();
 
   function onScroll(ev: NativeSyntheticEvent<NativeScrollEvent>) {
     const index = Math.round(ev.nativeEvent.contentOffset.x / windowWidth);

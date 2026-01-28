@@ -115,7 +115,7 @@ export function useDevices() {
             return;
         }
 
-        fetchDevices(devices.length > 0);
+        fetchDevices(false);
 
         let isPolling = true;
         const pollInterval = 60000;
@@ -135,14 +135,14 @@ export function useDevices() {
             if (pollTimeoutRef.current) clearTimeout(pollTimeoutRef.current);
             if (abortControllerRef.current) abortControllerRef.current.abort();
         };
-    }, [user?.id, fetchDevices, devices.length]);
+    }, [user?.id, fetchDevices]);
 
     const removeDevice = useCallback(async (fcmToken: string) => {
         if (!session?.access_token) return;
 
         const previousDevices = devices;
         setDevices(prev => prev.filter(d => d.fcm_token !== fcmToken));
-        impact('medium' as any);
+        impact();
 
         try {
             const res = await fetch(`${CENTRAL_API_URL}/api/central/sync/device`, {

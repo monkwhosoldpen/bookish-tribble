@@ -16,9 +16,13 @@ export function useWhoToFollow() {
     const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
+        const controller = new AbortController();
+
         async function fetchEntities() {
             try {
-                const response = await fetch(`${CENTRAL_API_URL}/api/global/entities?limit=10`);
+                const response = await fetch(`${CENTRAL_API_URL}/api/global/entities?limit=10`, {
+                    signal: controller.signal,
+                });
 
                 if (!response.ok) {
                     throw new Error('Failed to fetch entities');
@@ -28,18 +32,21 @@ export function useWhoToFollow() {
                 if (json.success && Array.isArray(json.data)) {
                     setData(json.data);
                 } else {
-                    // Fallback if data structure differs
                     setData([]);
                 }
             } catch (err) {
-                console.error('Failed to load who to follow:', err);
+                if (err instanceof Error && err.name === 'AbortError') return;
                 setError(err instanceof Error ? err : new Error('Unknown error'));
             } finally {
-                setLoading(false);
+                if (!controller.signal.aborted) {
+                    setLoading(false);
+                }
             }
         }
 
         fetchEntities();
+
+        return () => controller.abort();
     }, []);
 
     return { data, loading, error };

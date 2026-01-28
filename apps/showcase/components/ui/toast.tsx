@@ -73,31 +73,37 @@ export function SuccessToast({ message, onDismiss }: SuccessToastProps) {
     );
 }
 
-export function useToast() {
-    const [toasts, setToasts] = React.useState<Array<{
-        id: string;
-        type: 'error' | 'success';
-        message: string;
-        action?: {
-            label: string;
-            onPress: () => void;
-        };
-    }>>([]);
+interface ToastItem {
+    id: string;
+    type: 'error' | 'success';
+    message: string;
+    action?: {
+        label: string;
+        onPress: () => void;
+    };
+}
 
+interface ToastContextValue {
+    toasts: ToastItem[];
+    showError: (message: string, action?: { label: string; onPress: () => void }) => void;
+    showSuccess: (message: string) => void;
+    dismissToast: (id: string) => void;
+}
+
+const ToastContext = React.createContext<ToastContextValue | undefined>(undefined);
+
+export function ToastProvider({ children }: { children: React.ReactNode }) {
+    const [toasts, setToasts] = React.useState<ToastItem[]>([]);
     const timeoutRefs = React.useRef<Map<string, NodeJS.Timeout>>(new Map());
 
     const showToast = React.useCallback((
         type: 'error' | 'success',
         message: string,
-        action?: {
-            label: string;
-            onPress: () => void;
-        }
+        action?: { label: string; onPress: () => void }
     ) => {
         const id = Date.now().toString();
         setToasts(prev => [...prev, { id, type, message, action }]);
 
-        // Auto-dismiss after 5 seconds with cleanup
         const timeoutId = setTimeout(() => {
             setToasts(prev => prev.filter(toast => toast.id !== id));
             timeoutRefs.current.delete(id);
@@ -123,7 +129,6 @@ export function useToast() {
         showToast('success', message);
     }, [showToast]);
 
-    // Cleanup all timeouts on unmount
     React.useEffect(() => {
         return () => {
             timeoutRefs.current.forEach(timeoutId => clearTimeout(timeoutId));
@@ -131,10 +136,50 @@ export function useToast() {
         };
     }, []);
 
-    return {
+    const value = React.useMemo(() => ({
         toasts,
         showError,
         showSuccess,
         dismissToast,
-    };
+    }), [toasts, showError, showSuccess, dismissToast]);
+
+    return (
+        <ToastContext.Provider value={value}>
+            {children}
+            <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+        </ToastContext.Provider>
+    );
+}
+
+function ToastContainer({ toasts, onDismiss }: { toasts: ToastItem[]; onDismiss: (id: string) => void }) {
+    if (toasts.length === 0) return null;
+
+    return (
+        <View className="absolute bottom-0 left-0 right-0 z-50" pointerEvents="box-none">
+            {toasts.map(toast => (
+                toast.type === 'error' ? (
+                    <ErrorToast
+                        key={toast.id}
+                        message={toast.message}
+                        onDismiss={() => onDismiss(toast.id)}
+                        action={toast.action}
+                    />
+                ) : (
+                    <SuccessToast
+                        key={toast.id}
+                        message={toast.message}
+                        onDismiss={() => onDismiss(toast.id)}
+                    />
+                )
+            ))}
+        </View>
+    );
+}
+
+export function useToast() {
+    const context = React.useContext(ToastContext);
+    if (context === undefined) {
+        throw new Error('useToast must be used within a ToastProvider');
+    }
+    return context;
 }
