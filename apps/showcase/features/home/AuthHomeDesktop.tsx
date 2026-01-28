@@ -5,6 +5,8 @@ import { cn } from '@/registry/nativewind/lib/utils';
 import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { useHomeFeed, ChatTab, ChatItem } from '@/hooks/useHomeFeed';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { Icon } from '@/components/ui/Icon';
 
 export const AuthHomeDesktop = function AuthHomeDesktop() {
     const {
@@ -21,7 +23,6 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
     const handleChatSelect = (chat: ChatItem) => {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
         setSelectedChat(chat);
-        // Navigate to username route when chat is selected
         router.push(`/${chat.username}`);
     };
 
@@ -38,63 +39,109 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
             key={chat.username}
             onPress={() => handleChatSelect(chat)}
             className={cn(
-                'flex-row items-center gap-4 px-4 py-4 border-b border-border/40',
+                'flex-row items-center py-2.5 px-4',
                 selectedChat?.username === chat.username
-                    ? 'bg-muted/40'
-                    : 'active:bg-muted/30'
+                    ? 'bg-foreground/5'
+                    : 'active:bg-foreground/5'
             )}
         >
-            <View className="h-12 w-12 rounded-full bg-primary/10 items-center justify-center">
-                <Text className="text-primary font-bold text-lg">
+            {/* Avatar */}
+            <View className="h-[49px] w-[49px] rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#25D366' }}>
+                <Text className="text-white font-bold text-[20px]">
                     {chat.username.charAt(0).toUpperCase()}
                 </Text>
             </View>
-            <View className="flex-1">
-                <Text className="text-base font-semibold text-foreground">
-                    @{chat.username}
-                </Text>
-                <Text className="text-sm text-muted-foreground" numberOfLines={1}>
-                    {chat.lastMessage}
-                </Text>
+            {/* Content */}
+            <View className="flex-1 border-b border-border/15 pb-2.5">
+                <View className="flex-row items-center justify-between">
+                    <Text className="text-[16px] font-normal text-foreground">
+                        {chat.username}
+                    </Text>
+                    <Text
+                        className="text-[12px]"
+                        style={{ color: chat.unreadCount ? '#25D366' : '#8696A0' }}
+                    >
+                        {chat.timestamp}
+                    </Text>
+                </View>
+                <View className="flex-row items-center justify-between mt-1">
+                    <View className="flex-row items-center flex-1 mr-4">
+                        <Icon as={MaterialIcons} name="done-all" size={16} color="#53BDEB" style={{ marginRight: 3 }} />
+                        <Text className="text-[13px] text-muted-foreground flex-1" numberOfLines={1}>
+                            {chat.lastMessage}
+                        </Text>
+                    </View>
+                    {chat.unreadCount ? (
+                        <View className="min-w-[20px] h-[20px] rounded-full items-center justify-center px-1.5" style={{ backgroundColor: '#25D366' }}>
+                            <Text className="text-white text-[11px] font-bold">
+                                {chat.unreadCount}
+                            </Text>
+                        </View>
+                    ) : null}
+                </View>
             </View>
-            <Text className="text-xs text-muted-foreground">{chat.timestamp}</Text>
         </Pressable>
     );
 
     return (
         <View className="flex-1 bg-background flex-row">
-            <View className="w-[40%] border-r border-border/60 bg-background">
-                <View className="border-b border-border/60 bg-background/90 backdrop-blur-xl">
-                    <View className="flex-row gap-1 px-4 py-3">
-                        {(['following', 'invites', 'favourites'] as ChatTab[]).map((tab) => (
-                            <Pressable
-                                key={tab}
-                                onPress={() => handleTabChange(tab)}
-                                className={cn(
-                                    'px-4 py-2 rounded-full',
-                                    activeTab === tab
-                                        ? 'bg-primary/10'
-                                        : 'bg-transparent'
-                                )}
-                            >
-                                <Text
-                                    className={cn(
-                                        'text-sm font-semibold capitalize',
-                                        activeTab === tab
-                                            ? 'text-primary'
-                                            : 'text-muted-foreground'
-                                    )}
-                                >
-                                    {tab} ({counts[tab]})
-                                </Text>
-                            </Pressable>
-                        ))}
+            {/* Left sidebar - chat list */}
+            <View className="w-[35%] min-w-[320px] max-w-[420px] border-r border-border/30 bg-background">
+                {/* Sidebar header */}
+                <View className="h-[60px] flex-row items-center justify-between px-4 border-b border-border/20">
+                    <View className="h-10 w-10 rounded-full items-center justify-center" style={{ backgroundColor: '#25D366' }}>
+                        <Text className="text-white font-bold text-[16px]">U</Text>
+                    </View>
+                    <View className="flex-row items-center gap-2">
+                        <Pressable className="w-10 h-10 rounded-full items-center justify-center active:bg-foreground/5">
+                            <Icon as={MaterialIcons} name="chat" size={22} className="text-muted-foreground" />
+                        </Pressable>
+                        <Pressable className="w-10 h-10 rounded-full items-center justify-center active:bg-foreground/5">
+                            <Icon as={MaterialIcons} name="more-vert" size={22} className="text-muted-foreground" />
+                        </Pressable>
                     </View>
                 </View>
 
+                {/* Search bar */}
+                <View className="px-3 py-2">
+                    <View className="flex-row items-center bg-foreground/5 rounded-lg px-3 py-2 gap-3">
+                        <Icon as={MaterialIcons} name="search" size={20} className="text-muted-foreground" />
+                        <Text className="text-[14px] text-muted-foreground">Search or start new chat</Text>
+                    </View>
+                </View>
+
+                {/* Tabs */}
+                <View className="flex-row px-3 pb-1 gap-2">
+                    {(['following', 'invites', 'favourites'] as ChatTab[]).map((tab) => (
+                        <Pressable
+                            key={tab}
+                            onPress={() => handleTabChange(tab)}
+                            className={cn(
+                                'px-3 py-1.5 rounded-full',
+                                activeTab === tab
+                                    ? 'bg-[#25D366]/15'
+                                    : 'bg-foreground/5'
+                            )}
+                        >
+                            <Text
+                                className={cn(
+                                    'text-[13px] font-medium capitalize',
+                                    activeTab === tab
+                                        ? 'font-bold'
+                                        : 'text-muted-foreground'
+                                )}
+                                style={activeTab === tab ? { color: '#075E54' } : undefined}
+                            >
+                                {tab}
+                            </Text>
+                        </Pressable>
+                    ))}
+                </View>
+
+                {/* Chat list */}
                 {chats.length === 0 ? (
                     <View className="flex-1 items-center justify-center py-16 px-6">
-                        <Text className="text-lg font-black text-foreground text-center">No chats yet</Text>
+                        <Text className="text-lg font-bold text-foreground text-center">No chats yet</Text>
                         <Text className="text-sm text-muted-foreground text-center mt-2">
                             Follow channels to start conversations
                         </Text>
@@ -109,16 +156,17 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
                 )}
             </View>
 
-            <View className="flex-1 items-center justify-center bg-muted/10">
+            {/* Right panel - chat detail / empty state */}
+            <View className="flex-1 items-center justify-center" style={{ backgroundColor: '#F0F2F5' }}>
                 {selectedChat ? (
                     <View className="items-center w-full max-w-sm">
-                        <View className="h-24 w-24 rounded-full bg-primary/10 items-center justify-center mb-6">
-                            <Text className="text-primary font-black text-3xl">
+                        <View className="h-24 w-24 rounded-full items-center justify-center mb-6" style={{ backgroundColor: '#25D366' }}>
+                            <Text className="text-white font-bold text-3xl">
                                 {selectedChat.username.charAt(0).toUpperCase()}
                             </Text>
                         </View>
-                        <Text className="text-3xl font-black text-foreground mb-1 tracking-tighter">
-                            @{selectedChat.username}
+                        <Text className="text-3xl font-bold text-foreground mb-1 tracking-tight">
+                            {selectedChat.username}
                         </Text>
                         <Text className="text-muted-foreground text-lg mb-8">Ready to start chatting?</Text>
 
@@ -128,16 +176,17 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
                                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium).catch(() => { });
                                     router.push(`/${selectedChat.username}`);
                                 }}
-                                className="w-full py-4 rounded-2xl bg-primary items-center justify-center active:scale-[0.98] transition-transform"
+                                className="w-full py-4 rounded-xl items-center justify-center active:scale-[0.98]"
+                                style={{ backgroundColor: '#25D366' }}
                             >
-                                <Text className="text-primary-foreground font-bold text-[16px]">Open Conversation</Text>
+                                <Text className="text-white font-bold text-[16px]">Open Conversation</Text>
                             </Pressable>
                             <Pressable
                                 onPress={() => {
                                     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => { });
                                     router.push(`/${selectedChat.username}`);
                                 }}
-                                className="w-full py-4 rounded-2xl bg-transparent border border-border items-center justify-center active:bg-muted/20"
+                                className="w-full py-4 rounded-xl bg-transparent border border-border items-center justify-center active:bg-muted/20"
                             >
                                 <Text className="text-foreground font-semibold text-[16px]">View Profile</Text>
                             </Pressable>
@@ -145,22 +194,21 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
                     </View>
                 ) : (
                     <View className="items-center max-w-md px-12">
-                        <View className="w-20 h-20 rounded-3xl bg-primary/5 items-center justify-center mb-8 rotate-12">
-                            <View className="w-16 h-16 rounded-2xl bg-primary/10 items-center justify-center -rotate-12">
-                                <Text className="text-primary text-3xl">💬</Text>
-                            </View>
+                        <View className="w-[320px] h-[200px] items-center justify-center mb-6">
+                            <Icon as={MaterialIcons} name="lock" size={18} color="#8696A0" />
                         </View>
-                        <Text className="text-3xl font-black text-foreground mb-3 tracking-tighter text-center">Your conversations</Text>
-                        <Text className="text-muted-foreground text-center text-lg leading-relaxed mb-10">
-                            Select a chat from the sidebar to reach out to your friends and community.
+                        <Text className="text-[32px] font-light text-foreground/70 mb-3 text-center tracking-tight">
+                            Showcase Web
+                        </Text>
+                        <Text className="text-muted-foreground text-center text-[14px] leading-5 mb-8">
+                            Send and receive messages without keeping your phone online.{'\n'}
+                            Use Showcase on up to 4 linked devices and 1 phone at the same time.
                         </Text>
 
-                        <Pressable
-                            onPress={handleExplore}
-                            className="bg-primary/10 px-8 py-4 rounded-full active:scale-95 transition-all"
-                        >
-                            <Text className="text-primary font-bold">Discover new channels</Text>
-                        </Pressable>
+                        <View className="flex-row items-center gap-1.5">
+                            <Icon as={MaterialIcons} name="lock" size={12} color="#8696A0" />
+                            <Text className="text-[13px] text-muted-foreground">End-to-end encrypted</Text>
+                        </View>
                     </View>
                 )}
             </View>
