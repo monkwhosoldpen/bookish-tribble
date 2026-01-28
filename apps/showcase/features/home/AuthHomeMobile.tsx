@@ -80,16 +80,16 @@ export const AuthHomeMobile = function AuthHomeMobile() {
         >
             <Pressable
                 onPress={() => handleChatPress(item.username)}
-                className="flex-row items-center py-2.5 px-4 active:bg-foreground/5"
+                className="flex-row items-center py-3 px-4 active:bg-foreground/5"
             >
                 {/* Avatar */}
-                <View className="h-[49px] w-[49px] rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#25D366' }}>
-                    <Text className="text-white font-bold text-[20px]">
+                <View className="h-12 w-12 rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#25D366' }}>
+                    <Text className="text-white font-bold text-lg">
                         {item.username.charAt(0).toUpperCase()}
                     </Text>
                 </View>
                 {/* Content */}
-                <View className="flex-1 border-b border-border/15 pb-2.5">
+                <View className="flex-1 border-b border-border/15 pb-3">
                     <View className="flex-row items-center justify-between">
                         <Text className="text-[16.5px] font-normal text-foreground">{item.username}</Text>
                         <Text
@@ -107,8 +107,8 @@ export const AuthHomeMobile = function AuthHomeMobile() {
                             </Text>
                         </View>
                         {item.unreadCount ? (
-                            <View className="min-w-[20px] h-[20px] rounded-full items-center justify-center px-1.5" style={{ backgroundColor: '#25D366' }}>
-                                <Text className="text-white text-[11px] font-bold">
+                            <View className="min-w-[20px] h-5 rounded-full items-center justify-center px-1.5" style={{ backgroundColor: '#25D366' }}>
+                                <Text className="text-white text-xs font-bold">
                                     {item.unreadCount}
                                 </Text>
                             </View>
@@ -130,14 +130,23 @@ export const AuthHomeMobile = function AuthHomeMobile() {
                             onPress={() => handleTabChange(tab)}
                             className="flex-1 items-center py-3 relative"
                         >
-                            <Text
-                                className={cn(
-                                    'text-[13px] font-bold uppercase tracking-wide',
-                                    activeTab === tab ? 'text-white' : 'text-white/60'
+                            <View className="flex-row items-center gap-1">
+                                <Text
+                                    className={cn(
+                                        'text-[13px] font-bold uppercase tracking-wide',
+                                        activeTab === tab ? 'text-white' : 'text-white/60'
+                                    )}
+                                >
+                                    {tab}
+                                </Text>
+                                {counts[tab] > 0 && (
+                                    <View className="min-w-[16px] h-4 rounded-full items-center justify-center px-1" style={{ backgroundColor: '#25D366' }}>
+                                        <Text className="text-white text-[10px] font-bold">
+                                            {counts[tab] > 99 ? '99+' : counts[tab]}
+                                        </Text>
+                                    </View>
                                 )}
-                            >
-                                {tab}
-                            </Text>
+                            </View>
                             {activeTab === tab && (
                                 <View className="absolute bottom-0 left-4 right-4 h-[3px] rounded-full" style={{ backgroundColor: '#25D366' }} />
                             )}
@@ -146,25 +155,29 @@ export const AuthHomeMobile = function AuthHomeMobile() {
                 </View>
             </View>
 
-            {chats.length === 0 ? (
-                renderEmptyState()
-            ) : (
-                <FlatList
-                    data={chats}
-                    renderItem={renderChatItem}
-                    keyExtractor={(item) => item.username}
-                    showsVerticalScrollIndicator={false}
-                    contentContainerClassName="pb-24"
-                    refreshControl={
-                        <RefreshControl
-                            refreshing={refreshing}
-                            onRefresh={onRefresh}
-                            tintColor={refreshing ? undefined : 'transparent'}
-                            colors={['#25D366']}
-                        />
-                    }
-                />
-            )}
+            <View className="flex-1">
+                {chats.length === 0 ? (
+                    <View className="flex-1 items-center justify-center px-6">
+                        {renderEmptyState()}
+                    </View>
+                ) : (
+                    <FlatList
+                        data={chats}
+                        renderItem={renderChatItem}
+                        keyExtractor={(item) => item.username}
+                        showsVerticalScrollIndicator={false}
+                        contentContainerClassName="pb-24"
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh}
+                                tintColor={refreshing ? undefined : 'transparent'}
+                                colors={['#25D366']}
+                            />
+                        }
+                    />
+                )}
+            </View>
 
             {/* WhatsApp FAB */}
             <Pressable

@@ -39,20 +39,20 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
             key={chat.username}
             onPress={() => handleChatSelect(chat)}
             className={cn(
-                'flex-row items-center py-2.5 px-4',
+                'flex-row items-center py-3 px-4',
                 selectedChat?.username === chat.username
                     ? 'bg-foreground/5'
                     : 'active:bg-foreground/5'
             )}
         >
             {/* Avatar */}
-            <View className="h-[49px] w-[49px] rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#25D366' }}>
-                <Text className="text-white font-bold text-[20px]">
+            <View className="h-12 w-12 rounded-full items-center justify-center mr-3" style={{ backgroundColor: '#25D366' }}>
+                <Text className="text-white font-bold text-lg">
                     {chat.username.charAt(0).toUpperCase()}
                 </Text>
             </View>
             {/* Content */}
-            <View className="flex-1 border-b border-border/15 pb-2.5">
+            <View className="flex-1 border-b border-border/15 pb-3">
                 <View className="flex-row items-center justify-between">
                     <Text className="text-[16px] font-normal text-foreground">
                         {chat.username}
@@ -72,8 +72,8 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
                         </Text>
                     </View>
                     {chat.unreadCount ? (
-                        <View className="min-w-[20px] h-[20px] rounded-full items-center justify-center px-1.5" style={{ backgroundColor: '#25D366' }}>
-                            <Text className="text-white text-[11px] font-bold">
+                        <View className="min-w-[20px] h-5 rounded-full items-center justify-center px-1.5" style={{ backgroundColor: '#25D366' }}>
+                            <Text className="text-white text-xs font-bold">
                                 {chat.unreadCount}
                             </Text>
                         </View>
@@ -90,7 +90,7 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
                 {/* Sidebar header */}
                 <View className="h-[60px] flex-row items-center justify-between px-4 border-b border-border/20">
                     <View className="h-10 w-10 rounded-full items-center justify-center" style={{ backgroundColor: '#25D366' }}>
-                        <Text className="text-white font-bold text-[16px]">U</Text>
+                        <Text className="text-white font-bold text-base">U</Text>
                     </View>
                     <View className="flex-row items-center gap-2">
                         <Pressable className="w-10 h-10 rounded-full items-center justify-center active:bg-foreground/5">
@@ -123,37 +123,48 @@ export const AuthHomeDesktop = function AuthHomeDesktop() {
                                     : 'bg-foreground/5'
                             )}
                         >
-                            <Text
-                                className={cn(
-                                    'text-[13px] font-medium capitalize',
-                                    activeTab === tab
-                                        ? 'font-bold'
-                                        : 'text-muted-foreground'
+                            <View className="flex-row items-center gap-1">
+                                <Text
+                                    className={cn(
+                                        'text-[13px] font-medium capitalize',
+                                        activeTab === tab
+                                            ? 'font-bold'
+                                            : 'text-muted-foreground'
+                                    )}
+                                    style={activeTab === tab ? { color: '#075E54' } : undefined}
+                                >
+                                    {tab}
+                                </Text>
+                                {counts[tab] > 0 && (
+                                    <View className="min-w-[16px] h-4 rounded-full items-center justify-center px-1" style={{ backgroundColor: '#25D366' }}>
+                                        <Text className="text-white text-[10px] font-bold">
+                                            {counts[tab] > 99 ? '99+' : counts[tab]}
+                                        </Text>
+                                    </View>
                                 )}
-                                style={activeTab === tab ? { color: '#075E54' } : undefined}
-                            >
-                                {tab}
-                            </Text>
+                            </View>
                         </Pressable>
                     ))}
                 </View>
 
                 {/* Chat list */}
-                {chats.length === 0 ? (
-                    <View className="flex-1 items-center justify-center py-16 px-6">
-                        <Text className="text-lg font-bold text-foreground text-center">No chats yet</Text>
-                        <Text className="text-sm text-muted-foreground text-center mt-2">
-                            Follow channels to start conversations
-                        </Text>
-                    </View>
-                ) : (
-                    <FlatList
-                        data={chats}
-                        renderItem={renderChatItem}
-                        keyExtractor={(item) => item.username}
-                        showsVerticalScrollIndicator={false}
-                    />
-                )}
+                <View className="flex-1">
+                    {chats.length === 0 ? (
+                        <View className="flex-1 items-center justify-center px-6">
+                            <Text className="text-lg font-bold text-foreground text-center">No chats yet</Text>
+                            <Text className="text-sm text-muted-foreground text-center mt-2">
+                                Follow channels to start conversations
+                            </Text>
+                        </View>
+                    ) : (
+                        <FlatList
+                            data={chats}
+                            renderItem={renderChatItem}
+                            keyExtractor={(item) => item.username}
+                            showsVerticalScrollIndicator={false}
+                        />
+                    )}
+                </View>
             </View>
 
             {/* Right panel - chat detail / empty state */}
